@@ -5,6 +5,7 @@
 #include<math.h>
 #include<cmath>
 #include<functional>
+typedef unsigned long long ull;
 using namespace std;
 using namespace System;
 template<typename T>
@@ -339,7 +340,34 @@ public:
 			intervalo /= 2;
 		}
 	}
-	
+	ull _sortquick(ull i, ull d, ull p){
+		while (!(d == p && i == p && d == i)) {
+			while (arr[d] >= arr[p] && i < d) {
+				--d;
+			}
+			_sawp(&arr[d], &arr[p]);
+			p = d;
+			while (arr[p] >= arr[i] && i < d) {
+				++i;
+			}
+			_sawp(&arr[p], &arr[i]);
+			p = i;
+		}
+		return p;
+	}
+	void _quicksort(ull i, ull d, ull p) {
+		if (d <= i)return;
+		ull index;
+		index= _sortquick(i, d, p);
+		_quicksort(i, index,(i+index)/2);
+		_quicksort(index + 1, d,(index + 1 + d) / 2);
+	}
+	void QuickSort() {
+		ull i = (0);
+		ull d = (n - 1);
+		ull p= (n / 2);
+		_quicksort(i,d,p);
+	}
 	void print() {
 		for (size_t i = 0; i < n; i++)
 		{
@@ -348,7 +376,7 @@ public:
 	}
 };
 int main() {
-	long n = 43;
+	long n = 1000000;
 	//srand(time(NULL));
 	long* arr=new long[n];
 	for (size_t i = 0; i < n; i++){
@@ -357,9 +385,9 @@ int main() {
 	auto comp = [](long a, long b)->bool {return a > b; };
 	Sorting<long>* ordenar = new Sorting<long>(comp,arr,n);
 	clock_t inicio = clock();
-	ordenar->timSorting();
+	ordenar->QuickSort();
 	clock_t fin = clock();
-	print(arr, n);
+	//print(arr, n);
 	cout << "\ntiempo del Binary Insertion Sorting\n";
 	double tiempo = (fin - inicio)/CLOCKS_PER_SEC;
 	cout << tiempo;
