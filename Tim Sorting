@@ -355,15 +355,14 @@ public:
 		}
 		return p;
 	}
-	void _quicksort(ull i, ull d, ull p) {
-		if (d <= i)return;
-		ull index;
-		index= _sortquick(i, d, p);
-		_quicksort(i, index,(i+index)/2);
-		_quicksort(index + 1, d,(index + 1 + d) / 2);
+	void _quicksort(ull i, ull d, ull p){
+		if (d <= i) { return; }
+		ull index= _sortquick(i, d, p);
+		_quicksort(i, index,p);
+		_quicksort(index + 1, d,index+1);
 	}
-	void QuickSort() {
-		ull i = (0);
+	void QuickSort(){
+		ull i = 0;
 		ull d = (n - 1);
 		ull p= (n / 2);
 		_quicksort(i,d,p);
@@ -377,7 +376,7 @@ public:
 };
 int main() {
 	long n = 1000000;
-	//srand(time(NULL));
+	srand(time(NULL));
 	long* arr=new long[n];
 	for (size_t i = 0; i < n; i++){
 		arr[i] = rand() % n;
@@ -388,10 +387,9 @@ int main() {
 	ordenar->QuickSort();
 	clock_t fin = clock();
 	//print(arr, n);
-	cout << "\ntiempo del Binary Insertion Sorting\n";
+	cout << "\nTiempo del QuickSort\n";
 	double tiempo = (fin - inicio)/CLOCKS_PER_SEC;
 	cout << tiempo;
-
 	delete ordenar;
 	cout << tiempo<<"\n";
 	system("pause");
