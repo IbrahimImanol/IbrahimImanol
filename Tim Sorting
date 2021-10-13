@@ -1,0 +1,371 @@
+#include<iostream>
+#include<string>
+#include<string.h>
+#include<ctime>
+#include<math.h>
+#include<cmath>
+#include<functional>
+using namespace std;
+using namespace System;
+template<typename T>
+void Merge(T* a1, T* a2, T *a, size_t n) {
+	size_t i, j, k;
+	i = j = k = 0;
+	size_t mitad = n / 2;
+	while (i < mitad && j < n - mitad) {
+		if (a1[i] < a2[j]){
+			a[k++] = a1[i++];
+		}else{
+			a[k++] = a2[j++];
+		}
+	}
+	while (i < mitad){
+		a[k++] = a1[i++];
+	}
+	while (j < n - mitad){
+		a[k++] = a2[j++];
+	}
+}
+template<typename T>
+void mergesort(T *a, size_t n) {
+	if (n>1){
+		T* a1 = new T[n / 2 ];
+		T* a2 = new T[(n)-(n / 2)];
+		for (size_t i = 0; i < n/2; i++){
+			a1[i] = a[i];
+		}
+		for (size_t j = n/2; j < n; j++){
+			a2[j - n / 2] = a[j];
+		}
+		mergesort(a1, n / 2);
+		mergesort(a2, n - n / 2);
+		Merge(a1, a2, a, n);
+	}
+}
+template<typename T>
+void print(T arr[],size_t n) {
+	for (size_t i = 0; i < n; i++)
+	{
+		cout << arr[i]<<" ";
+	}
+}
+
+
+template<class T>
+class Sorting
+{
+private:
+	T* arr;
+	size_t n;
+	function<bool(T,T)> filtrador;
+private:
+	void _tm_v1insertionSort(long ini, long fin) {
+		long aux,k;
+		for (long i = ini + 1; i <= fin; ++i) {
+			aux = arr[i];
+			k = i - 1;
+			while (k >= ini && arr[k] > aux) {
+				arr[k + 1] = arr[k--];
+			}
+			arr[k + 1] = aux;
+		}
+	}
+	void _tm_v1merge(long l, long m, long r) {
+		long len1 = (m - l);
+		long len2 = (r - m);
+		T* left = new T[len1];
+		T* right = new T[len2];
+		for (long i = 0; i < len1; i++)
+			left[i] = arr[l + i];
+		for (long j = 0; j < len2; j++)
+			right[j] = arr[m + 1 + j];
+		long i = 0;
+		long j = 0;
+		long k = l;
+		while (i < len1 && j <len2) {
+			if (left[i] < right[j]) {
+				arr[k++] = left[i++];
+			}else {
+				arr[k++] = right[j++];
+			}
+		}
+		while (i < len1) {
+			arr[k++] = left[i++];
+		}
+		while (j < len2) {
+			arr[k++] = right[j++];
+		}
+		delete left;
+		delete right;
+	}
+	void _mergesort(T* arr, size_t n) {
+		if (n > 1)
+		{
+			T* a1 = new T[n / 2];
+			T* a2 = new T[(n)-(n / 2)];
+			for (size_t i = 0; i < n / 2; i++)
+			{
+				a1[i] = arr[i];
+			}
+			for (size_t j = n / 2; j < n; j++)
+			{
+				a2[j - n / 2] = arr[j];
+			}
+			_mergesort(a1, n / 2);
+			_mergesort(a2, n - n / 2);
+			_merge(a1, a2, n);
+		}
+	}
+	void _sawp(T* a, T* b) {
+		T aux = *a;
+		*a = *b;
+		*b = aux;
+	}
+	void _merge(T* a1, T* a2, size_t n) {
+		size_t i, j, k;
+		i = j = k = 0;
+		size_t mitad = n / 2;
+		while (i < mitad && j < n - mitad) {
+			if (a1[i] < a2[j])
+			{
+				arr[k++] = a1[i++];
+			}
+			else
+			{
+				arr[k++] = a2[j++];
+			}
+		}
+		while (i < mitad)
+		{
+			arr[k++] = a1[i++];
+		}
+		while (j < n - mitad)
+		{
+			arr[k++] = a2[j++];
+		}
+	}
+	void _mergesort_v2(size_t inicio, size_t fin) {
+		if (fin <= inicio)return;
+		size_t m = (fin + inicio) / 2;
+		_mergesort_v2(inicio,m);//dividimos por la izquierda
+		_mergesort_v2(m+1,fin);//dividimos por la derecha
+		__merge_v2(inicio, m, fin);//combinamos
+	}
+	void __merge_v2(size_t ini, size_t med, size_t fin) {
+		T* auxArr = new T[(fin - ini) + 1];
+		size_t i, j, k;
+		i = ini;
+		j = med + 1;
+		k = 0;
+		while (i<=med&&j<=fin){
+			if (arr[i]>arr[j]){
+				auxArr[k++]=arr[j++];
+			}else{
+				auxArr[k++]=arr[i++];
+			}
+		}
+		while (i<=med){
+			auxArr[k++]=arr[i++];
+		}
+		while (j<=fin){
+			auxArr[k++] = arr[j++];
+		}
+		k = 0;
+		for (size_t i = 0; i < (fin - ini) + 1; i++){
+			arr[i+ini] = auxArr[k++];
+		}
+		delete auxArr;
+	}
+	long int _busquedaBinaria(long int inicio, long int fin, long int item ){
+		if (fin > inicio){
+			long int mitad = inicio+(fin-inicio) / 2;
+			if (item == arr[mitad]) {
+				return mitad + 1;
+			}else if (item > arr[mitad]) {
+				return _busquedaBinaria(mitad + 1,fin,item);
+			}else{
+				return _busquedaBinaria(inicio, mitad - 1, item);
+			}
+		}else{
+			if ((item > arr[inicio])){
+				return (1 + inicio);
+			}else{
+				return  inicio;
+			}
+		}
+	}
+public:
+	Sorting(function<bool(T,T)> filtrador,T* arr = new T[10], size_t n = 10)
+		:filtrador(filtrador),arr(arr),n(n){}
+	~Sorting(){
+		delete arr;
+		n = NULL;
+	}
+	void Merge() {
+		_mergesort(this->arr,this->n);
+	}
+	void Merge_v2(){
+		_mergesort_v2(0, this->n-1);
+	}
+	void binarysorting(){
+		long int k;
+		for (long int i = 1; i < n; i++){
+			k = i - 1;
+			if (arr[i-1] > arr[i]) {
+				long int num = arr[i];
+				long int aux = _busquedaBinaria(0, i-1, num);
+				while (k>=aux){
+					arr[k + 1] = arr[k--];
+				}
+				arr[k+1] = num;
+			}
+		}
+	}
+	void bubbleSort(function<bool(T,T)> comp) {
+		for (size_t i = 0; i < size - 1; ++i) {
+			for (size_t j = 0; j < size - 1 - i; ++j) {
+				if (comp(arr[j], arr[j + 1])) {
+					sawp(&arr[j], &arr[j + 1]);
+				}
+			}
+		}
+	}
+	void exchangeSort(function<bool(T,T)> comp) {
+		for (size_t i = 0; i < n - 1; ++i)
+			for (size_t j = i + 1; j < n; ++j)
+				if (comp(arr[i], arr[j])) {
+					sawp(&arr[i], &arr[j]);
+				}
+	}
+	void ordenInsercion() {
+		int aux, k;
+		for (size_t i = 1; i < size; i++) {
+			aux = arr[i];
+			k = i - 1;
+			while (k >= 0 && aux < arr[k]) {
+				arr[k + 1] = arr[k--];
+			}
+			arr[k + 1] = aux;
+		}
+	}
+	void timSort() {
+		long run = 5;
+		long minimo = 0;
+		for (long i = 0; i < n; i += run){
+			if ((i+run-1)<(n-1)){
+				minimo = i + run - 1;
+			}else{
+				minimo = n - 1;
+			}
+			_tm_v1insertionSort(i,minimo);
+		}
+		long iter = run;
+		print();
+		cout << "\n\n\n";
+		while (iter <n){
+			for (long j = 0; j < n; j += 2 * iter){
+				long mid = j+iter-1;
+				if (j + 2 * iter - 1 < n - 1) {
+					minimo = j + 2 * iter - 1;
+				}else{
+					minimo = n - 1;
+				}
+				long right = minimo;
+				if (mid < right){
+					__merge_v2(j, mid,minimo );
+				}
+				cout << "\n\n";
+				print();
+				cout << "\n\n";
+			}
+			iter = 2*iter;
+		}
+	}
+	void timSorting() {
+		if (n<64){
+			binarysorting();
+		}else{
+			timSort();
+		}
+	}
+	void ordenDesc() {
+		for (size_t i = 0; i < this->size - 1; ++i) {
+			if (arr[i] > arr[i + 1]) {
+				sawp(&arr[i], &arr[i + 1]);
+				if (i == 0) {
+					--i;
+				}
+				else {
+					i -= 2;
+				}
+			}
+		}
+	}
+	void OrdSeleccionOrdinal() {
+		int k, menor;
+		for (size_t i = 0; i < size - 1; i++) {
+			k = i;
+			menor = arr[i];
+			for (size_t j = i + 1; j < size; j++) {
+				if (arr[j] < menor) {
+					menor = arr[j];
+					k = j;
+				}
+			}
+			arr[k] = arr[i];
+			arr[i] = menor;
+		}
+		
+	}
+	void ordShellSort() {
+		int i, j, k, intervalo = size / 2;
+		int temp;
+		while (intervalo > 0) {
+			for (i = intervalo; i < size; i++) {
+				j = i - intervalo;
+				while (j >= 0) {
+					k = j + intervalo;
+					if (arr[j] <= arr[k]) {
+						j = -1;
+					}
+					else {
+						temp = arr[j];
+						arr[j] = arr[k];
+						arr[k] = temp;
+						j -= intervalo;
+					}
+				}
+			}
+			intervalo /= 2;
+		}
+	}
+	
+	void print() {
+		for (size_t i = 0; i < n; i++)
+		{
+			cout << arr[i] << " ";
+		}
+	}
+};
+int main() {
+	long n = 43;
+	//srand(time(NULL));
+	long* arr=new long[n];
+	for (size_t i = 0; i < n; i++){
+		arr[i] = rand() % n;
+	}
+	auto comp = [](long a, long b)->bool {return a > b; };
+	Sorting<long>* ordenar = new Sorting<long>(comp,arr,n);
+	clock_t inicio = clock();
+	ordenar->timSorting();
+	clock_t fin = clock();
+	print(arr, n);
+	cout << "\ntiempo del Binary Insertion Sorting\n";
+	double tiempo = (fin - inicio)/CLOCKS_PER_SEC;
+	cout << tiempo;
+
+	delete ordenar;
+	cout << tiempo<<"\n";
+	system("pause");
+	return 0;
+}
