@@ -1,0 +1,425 @@
+#include<iostream>
+#include<fstream>
+#include<functional>
+#include<algorithm>
+#include<vector>
+using namespace std;
+typedef long int ull;
+template<class T>
+class Sorting
+{
+private:
+	T* arr;
+	ull n;
+	function<bool(T, T)> compar;
+private:
+	void _combination(ull ini, ull mitad, ull fin) {
+		T* arraux = new T[(fin - ini) + 1];
+		ull i, d, k;
+		k = 0;
+		i = ini;
+		d = mitad + 1;
+		while (i<=mitad&&d<=fin){
+			if (compar(arr[i],arr[d])){
+				arraux[k++] = arr[d++];
+			}else{
+				arraux[k++] = arr[i++];
+			}
+		}
+		while (i<=mitad){
+			arraux[k++] = arr[i++];
+		}
+		while (d<=fin){
+			arraux[k++] = arr[d++];
+		}
+		k = 0;
+		for (ull j = ini; j <=fin ; j++){
+			arr[j] = arraux[k++];
+		}
+		delete arraux;
+	}
+	void _merge(ull ini,ull fin) {
+		if (fin <= ini) { return; }
+		ull mitad = (ini + fin) / 2;
+		_merge(ini, mitad);//divido por la izquierda;
+		_merge(mitad + 1, fin);//divido por la derecha;
+		_combination(ini, mitad, fin);//combinar
+	}
+	ull _binarySearch(ull ini, ull fin,ull num) {
+		if (fin<=ini){
+			if (num > arr[ini]) {
+				return (ini + 1);
+			}
+			else { return (ini); }
+		}else{
+			ull mitad = (fin + ini) / 2;
+			if (num == arr[mitad]) {
+				return mitad + 1;
+			}
+			else if (num > arr[mitad]) {
+				return _binarySearch(mitad + 1, fin, num);
+			}
+			return _binarySearch(ini, mitad - 1, num);
+		}
+	}
+	long int _busquedaBinaria(long int inicio, long int fin, long int item) {
+		if (fin > inicio) {
+			long int mitad = inicio + (fin - inicio) / 2;
+			if (item == arr[mitad]) {
+				return mitad + 1;
+			}
+			else if (item > arr[mitad]) {
+				return _busquedaBinaria(mitad + 1, fin, item);
+			}
+			else {
+				return _busquedaBinaria(inicio, mitad - 1, item);
+			}
+		}
+		else {
+			if ((item > arr[inicio])) {
+				return (1 + inicio);
+			}
+			else {
+				return  inicio;
+			}
+		}
+	}
+	void _binarysortIns(ull inicio,ull fin) {
+		ull k;
+		for (ull i = inicio+1; i <= fin; i++){
+			k = i - 1;
+			if (arr[k]>arr[i]){
+				ull num = arr[i];
+				ull aux = _binarySearch(0, k, num);
+				while (k>=aux){
+					arr[k + 1] = arr[k--];
+				}
+				arr[aux] = num;
+			}
+		}
+	}
+	void _insertionSort(ull ini, ull fin) {
+		ull aux, k;
+		for (ull i = ini + 1; i <= fin; ++i) {
+			aux = arr[i];
+			k = i - 1;
+			while (k >= ini && arr[k] > aux) {
+				arr[k + 1] = arr[k--];
+			}
+			arr[k + 1] = aux;
+		}
+	}
+	void __timsort() {
+		ull minirun = 32;
+		ull minimo = 0;
+		for (ull i = 0; i < n; i+=minirun){
+			if ((i+minirun-1)<(n-1)){
+				minimo = i + minirun - 1;
+			}else{
+				minimo = n - 1;
+			}
+			print();
+			cout << "\n";
+			_insertionSort(i, minimo);
+		}
+		print();
+		cout << "\n\n";
+		ull iter = minirun;
+		while (iter<n){
+			for (ull izq = 0; izq < n; izq +=2*iter){
+				ull mitad = izq + iter - 1;
+				if (izq +2*iter-1<n-1){
+					minimo = izq + 2 * iter - 1;
+				}else{
+					minimo = n - 1;
+				}
+				ull derecha = minimo;
+				if (mitad>=derecha){
+					continue;
+				}
+				_combination(izq, mitad, derecha);
+			}
+			iter *= 2;
+		}
+	}
+	void _timsort() {
+		if (n<64){
+			_binarysortIns(0, n - 1);
+		}else{
+			__timsort();
+		}
+	}
+	void print() {
+		for (ull i = 0; i < n; i++)
+		{
+			cout << arr[i]<<" ";
+		}
+	}
+public:
+	Sorting(function<bool(T, T)> compar,T* arr=new T[10], ull n=10)
+		:compar(compar),arr(arr),n(n){}
+	~Sorting(){
+	}
+	void Merge() {
+		_merge(0, this->n - 1);
+	}
+	void print(function<void(T)> mostrar) {
+		for (ull i = 0; i < n; i++){
+			mostrar(arr[i]);
+		}
+	}
+	void TimSort() {
+		_timsort();
+	}
+	ull _sortquick(ull i, ull d, ull p) {
+		while (!(d == p && i == p && d == i)) {
+			while (arr[d] >= arr[p] && i < d) {
+				--d;
+			}
+			_sawp(&arr[d], &arr[p]);
+			p = d;
+			while (arr[p] >= arr[i] && i < d) {
+				++i;
+			}
+			_sawp(&arr[p], &arr[i]);
+			p = i;
+		}
+		return p;
+	}
+	void _quicksort(ull i, ull d, ull p) {
+		if (d <= i) { return; }
+		ull index = _sortquick(i, d, p);
+		_quicksort(i, index, p);
+		_quicksort(index + 1, d, index + 1);
+	}
+	void QuickSort() {
+		ull i = 0;
+		ull d = (n - 1);
+		ull p = (n / 2);
+		_quicksort(i, d, p);
+	}
+	void ordShellSort() {
+		int i, j, k, intervalo = n / 2;
+		int temp;
+		while (intervalo > 0) {
+			for (i = intervalo; i < n; i++) {
+				j = i - intervalo;
+				while (j >= 0) {
+					k = j + intervalo;
+					if (arr[j] <= arr[k]) {
+						j -= 1;
+					}else{
+						temp = arr[j];
+						arr[j] = arr[k];
+						arr[k] = temp;
+						j -= intervalo;
+					}
+					print();
+					cout << "\n\n";
+				}
+			}
+			intervalo /= 2;
+		}
+	}
+};
+
+void recursi(vector<vector<bool>>& map, int i, int j) {
+	map[i][j] = false;
+	if (i - 1 >= 0 || j - 1 >= 0 || j + 1 < map[0].size() ||
+		i + 1 < map.size())
+	{
+		if (i - 1 >= 0) {
+			if (map[i - 1][j] == true) {
+				recursi(map, i - 1, j);
+			}
+		}
+		if (j - 1 >= 0) {
+			if (map[i][j - 1] == true) {
+				recursi(map, i, j - 1);
+			}
+		}
+		if (i + 1 < map.size()) {
+			if (map[i + 1][j] == true) {
+				recursi(map, i + 1, j);
+			}
+		}
+		if (j + 1 < map[0].size()) {
+			if (map[i][j + 1] == true) {
+				recursi(map, i, j + 1);
+			}
+		}
+	}
+	return;
+
+}
+
+class CRooms
+{
+private:
+	vector<vector<bool>>map;
+	int contRooms;
+public:
+	CRooms() {
+		contRooms = 0;
+	}
+	~CRooms() {}
+	void leer(string nombrearchi) {
+		ifstream archi(nombrearchi);
+		string line;
+		int filas, colu;
+		archi >> filas;
+		archi >> colu;
+		int contcol = 0;
+		int contfil = 0;
+		map.resize(filas);
+		while (archi >> line) {
+			bool auxb = false;
+			if (line == ".") {
+				auxb = true;
+			}
+			map[contfil].push_back(auxb);
+			contcol++;
+			if (contcol == colu) {
+				contfil++;
+				contcol = 0;
+			}
+		}
+		for (int i = 0; i < filas; i++) {
+			for (int j = 0; j < colu; j++) {
+				if (map.at(i).at(j) == false) {
+					continue;
+				}
+				if (map.at(i).at(j) == true) {
+					contRooms++;
+					recursi(map, i, j);
+				}
+			}
+		}
+		cout << contRooms;
+	}
+};
+
+template<class T>
+class HashTable
+{
+private:
+	T* arr;
+	ull n;
+	function<bool(T)> filtr;
+	function<bool(T)> show;
+	function<void(T&)> ini;
+	ull cont;
+private:
+	ull CProbing(ull pos) {
+		ull it = pos;
+		ull jump = 1;
+		while (filtr(arr[it])==false){
+			it = pos;
+			it += pow(jump, 2);
+			if (it>=n){
+				it %= n;
+			}
+			++jump;
+		}
+		return it;
+	}
+public:
+	HashTable(ull n,bool(*ptr[2])(T),
+		function<void(T&)> ini):n(n),ini(ini){
+		arr = new T[n];
+		cont = 0;
+		comp = ptr[0];
+		show = ptr[1];
+		for (ull i = 0; i < n; i++){
+			ini(arr[i]);
+		}
+	}
+	~HashTable(){
+		delete arr;
+	}
+	ull HashFunction(string clave) {
+		ull value = 0;
+		for (ull i = 0; i < clave.size(); i++){
+			value += clave.at(i);
+		}
+		return value % n;
+	}
+	void insert(string clave, T value) {
+		if (cont>=n){return;}
+		ull pos = HashFunction(clave);
+		if (filtr(arr[pos])){
+			arr[pos] = value;
+			++cont;
+		}else{
+			arr[CProbing(pos)] = value;
+			++cont;
+		}
+	}
+	bool find(string clave) {
+		ull pos = HashFunction(clave);
+		if (pos>=n||pos<0){return false;}
+		if (filtr(arr[pos])){return false;}
+		return true;
+	}
+	T& operator[](string key) {
+		ull pos = HashFunction(key);
+		if (pos <n|| pos >=0){
+			return arr[pos];
+		}
+		return T();
+	}
+	void Show() {
+		for (ull i = 0; i < n; i++){
+			std::cout << "\n" << (i + 1) << "-->";
+			show(arr[i]);
+		}
+	}
+};
+
+void leer(string nombrearch) {
+	ifstream archi(nombrearch);
+	string nombre;
+	string apellido;
+	string casaDire;
+	string num1;
+	string num2;
+	while (archi>>nombre>>apellido>>casaDire>>num1>>num2){
+
+	}
+}
+int main() {
+	/*const ull n= 100;
+	auto compar = [](int a, int b)->bool {return a > b; };
+	auto mostrar = [](int a)->void {cout << a << " "; };
+	int arr[n];
+	for (ull i = 0; i < n; i++){
+		arr[i] = rand() % n;
+	}
+	int sh = 1;
+	Sorting<int>* sort = new Sorting<int>(compar, arr, n);
+	sort->TimSort();
+	sort->print(mostrar);
+	delete sort;*/
+
+
+	auto comp = [](int a) -> bool { return (a == -1); };
+	auto show = [](int a) -> bool { cout << a; return true; };
+	auto init = [](int& a) -> void { a = -1; };
+	bool (*ptr[2])(int);
+	ptr[0] = comp;
+	ptr[1] = show;
+
+	/*
+	HashTable<int>* hash = new HashTable<int>(10, ptr, init);
+	hash->insert("Luis",4);
+	hash->Show();
+	cout << "\nSe encontro: " << hash->find("Luis");
+	(*hash)["Luis"] = 100;
+	hash->Show();*/
+
+	leer("leerachi.txt");
+
+
+	system("pause");
+	return 0;
+}
