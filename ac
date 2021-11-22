@@ -1,0 +1,953 @@
+#include<iostream>
+#include<functional>
+#include<string>
+#include<string.h>
+#include<fstream>
+#include<utility>
+#include<list>
+#include<vector>
+using namespace std;
+using namespace System;
+typedef long long ll;
+template<class T>
+class BlockChain;
+template<class T>
+class Tree;
+template<class T>
+class Bloque
+{
+	T dato;
+	Bloque<T>* next;
+	Bloque<T>* back;
+	string* prev;
+	string* hash;
+	friend BlockChain<T>;
+	friend Tree<T>;
+public:
+	Bloque(T dato=T(), Bloque<T>* next = nullptr, Bloque<T>* back = nullptr, string* prev = nullptr, string* hash = nullptr)
+		:dato(dato), next(next), back(back), prev(prev), hash(hash) {}
+	~Bloque(){}
+	T& operator*() {
+		return (dato);
+	}
+};
+template<typename T>
+class Node
+{
+private:
+	T value;
+	Node<T>* left;
+	Node<T>* right;
+	int altura;
+	friend Tree<T>;
+public:
+	Node() = default;
+	Node(T value=T(), Node<T>* left = nullptr, Node<T>* right = nullptr)
+		:value(value), left(left), right(right) {
+		this->altura = 0;
+	}
+	~Node(){}
+};
+
+template<class T>
+class Tree
+{
+private:
+	Node<T>* root;
+	unsigned long _size;
+	function<int(T&, T&)> comp;
+	function<bool(T,T)> comp2;
+	function<void(T)> show;
+	function<void(Node<T>*&, T)> insertIN;//8
+	void _podar(Node<T>*& n) {
+		if (n != nullptr) {
+			_podar(n->left);
+			_podar(n->right);
+			delete n;
+			n = nullptr;
+		}
+	}
+private:
+	void _insert(T value, Node<T>*& n) {//complejidad detallada: 6
+		if (n == nullptr) {//1+(4)=5
+			n = new Node<T>(value);//1
+			++_size;//2
+			return;//1
+		}
+		int r = comp(value, n->value);
+		if(r >= 0){//1
+			_insert(value, n->right);// total de la funcion: 6
+		}else if(r < 0){
+			_insert(value, n->left);//total de la funcion: 6
+		}
+		_balanceo(n);
+	}
+	//complejidad de tiempo 6
+	//Big O(1)
+	void _print(Node<T>* n) {//InOrder
+		if (n == nullptr) { return; }
+		_print(n->left);
+		show(n->value);//para cambiar
+		_print(n->right);
+	}
+	bool _to_Find(Node<T>* n, T dato) {
+		if (n == nullptr) {
+			return false;
+		}else{
+			int r = comp(dato, n->value);
+			if (r == 0) {
+				return true;
+			}else if (r > 0) {
+				return _to_Find(n->right, dato);
+			}else{
+				return _to_Find(n->left, dato);
+			}
+		}
+	}
+	int _height(Node<T>* node) {
+		if (node == nullptr) {
+			return 0;
+		}else{
+			int hi, hd;
+			hi = 1 + _height(node->left);
+			hd = 1 + _height(node->right);
+			return (hi > hd) ? hi : hd;
+		}
+	}
+	T& _get(Node<T>*&n,T dato) {
+		if (n != nullptr) {
+			int r = comp(dato, n->value);
+			if (r == 0){
+				return n->value;
+			}else if (r > 0) {
+				return _get(n->right, dato);
+			}else {
+				return _get(n->left, dato);
+			}
+		}
+	}
+	Node<T>*& _getNode(Node<T>*& n, T dato) {
+		if (n != nullptr) {
+			int r = comp(dato, n->value);
+			if (r == 0) {
+				return n;
+			}else if (r > 0) {
+				return _getNode(n->right, dato);
+			}else {
+				return _getNode(n->left, dato);
+			}
+		}
+	}
+	void recorridocondition(Node<T>*n, T dato,function<int(T,T)> comp,function<bool(T,T)> comp2) {
+		if (n != nullptr){
+			int r = comp(dato, n->value);
+			if (r == 0){
+				show(n->value);
+				return recorridocondition(n->right, dato,comp, comp2);
+				return recorridocondition(n->left, dato, comp, comp2);
+			}else if (r > 0){
+				return recorridocondition(n->right, dato,comp,comp2);
+			}else{
+				return recorridocondition(n->left, dato, comp,comp2);
+			}
+		}
+	}
+	void _printCondition(Node<T>* n,T dato,function<bool(T,T)> comp2) {
+		if (n == nullptr) { return; }
+		_printCondition(n->left,dato,comp2);
+		if (comp2(n->value,dato)){
+			show(n->value);//para cambiar
+		}
+		_printCondition(n->right,dato,comp2);
+	}
+	void _rotarDerecha(Node<T>*& nodo) {
+		Node<T>* p = nodo->left;
+		nodo->left = p->right;
+		p->right = nodo;
+		nodo = p;
+	}
+	int _altura(Node<T>* n) {
+		if (n == nullptr) {
+			return 0;
+		}
+		return n->altura;
+	}
+	void _rotarIzquierda(Node<T>*& nodo) {
+		Node<T>* p = nodo->right;
+		nodo->right = p->left;
+		p->left = nodo;
+		nodo = p;
+	}
+	void _balanceo(Node<T>*& nodo) {
+		int fb = (_altura(nodo->right) - _altura(nodo->left));
+
+		if (fb > 1) {
+			int hhleft = _altura(nodo->right->left);
+			int hhright = _altura(nodo->right->right);
+			if (hhleft > hhright) {
+				_rotarDerecha(nodo->right);
+			}
+			_rotarIzquierda(nodo);
+		}
+		if (fb < -1) {
+			int hhleft = _altura(nodo->left->left);
+			int hhright = _altura(nodo->left->right);
+			if (hhleft < hhright) {
+				_rotarIzquierda(nodo->left);
+			}
+			_rotarDerecha(nodo);
+		}
+		int hleft = _altura(nodo->left);
+		int hright = _altura(nodo->right);
+		nodo->altura = 1 + ((hleft > hright) ? hleft : hright);
+	}
+	void minimo_(Node<T>* nodo){
+		if (nodo->izq == nullptr){
+			cout << nodo->elemento;
+		}else{
+			minimo_(nodo->izq);
+		}
+	}
+
+	void max_(Node<T>* nodo)
+	{
+		if (nodo->der == nullptr)
+		{
+			cout << nodo->elemento;
+		}
+		else
+		{
+			max_(nodo->der);
+		}
+	}
+	bool find(Node<T>* nodo, T dato) {
+		if (nodo == nullptr) return false;
+		else {
+			bool r = (nodo->elemento == dato);
+			if (r) return true;
+			else if (nodo->elemento < dato)
+			{
+				return find(nodo->der, dato);
+			}
+			else {
+				return find(nodo->izq, dato);
+			}
+		}
+	}
+	bool eliminar(Node<T>*& nodo, T e) {
+		if (nodo == nullptr)
+			return false;
+		else {
+			int r = this->comparar(nodo->elemento, e);
+
+			if (r < 0) {
+				return eliminar(nodo->der, e);
+			}
+			else if (r > 0) {
+				return eliminar(nodo->izq, e);
+			}
+			else { // r == 0 encontró el elemento e en el arbol
+				if (nodo->der == nullptr && nodo->izq == nullptr) {
+					nodo = nullptr;
+					//eliminar nodo;      
+					return true;
+				}
+				else if (nodo->izq == nullptr) {
+					nodo = nodo->der;
+					return true;
+				}
+				else if (nodo->der == nullptr) {
+					nodo = nodo->izq;
+					return true;
+				}
+				else {
+					Node<T>* aux = nodo->der; //buscara el menor elemento por la derecha
+					while (aux->izq != nullptr)
+					{
+						aux = aux->izq; //Se obtiene la hoja menor
+					}
+					nodo->elemento = aux->elemento; //Se actualiza el elemento en el nodo raiz y
+					return eliminar(nodo->der, aux->elemento); //se envía a eliminar el elemento en el arbol por la derecha
+				}
+			}
+		}
+	}
+public:
+	Tree() = default;
+	Tree(function<int(T&,T&)> comp, function<void(T&)> show){
+		this->comp = comp;
+		this->show = show;
+		root = nullptr;
+		_size = 0;
+	}
+	~Tree(){_podar(root);}
+	void insert(T value){
+		_insert(value, root);
+	}
+	bool vacio() {
+		return root == nullptr;
+	}
+	T& get(T dato){
+		return _get(root, dato);
+	}
+	bool printSector(T dato,function<bool(T,T)>comp) {
+		bool valor = toFind(dato);
+		if (valor){
+			Node<T>* aux=this->_getNode(root,dato);
+			_printCondition(aux,dato,comp);
+			return true;
+		}
+		return false;
+	}
+	void printwithCondition(T dato, function<int(T, T)> comp,function<bool(T,T)> comp2) {
+		recorridocondition(root, dato, comp,comp2);
+	}
+	void PrintByCondition(T dato) {
+		_printCondition(root, dato);
+	}
+	Node<T>* minimo(Node<T>* nodo) {
+		if (nodo->left == nullptr) {
+			return nodo->value;
+		}else return minimo(nodo->left);
+	}
+	Node<T>* maximo(Node<T>* nodo) {
+		if (nodo->right == nullptr) { return nodo->value; }
+		else return maximo(nodo->right);
+	}
+	int altura(Node<T>* nodo) {
+		if (nodo == nullptr) {return -1;}
+		else{
+			int left = 1 + altura(nodo->left);
+			int right = 1 + altura(nodo->right);
+			return std::max(left, right);
+		}
+	}
+	bool toFind(T valor) {
+		return _to_Find(this->root, valor);
+	}
+	void printInOrderNode(Node<T>*& node) {
+		_print(node);
+	}
+	void _eliminar(Node<T>*& n, T e) {
+		if (n == nullptr) return;
+		else {
+			int r = comp(e, n->value);
+			if (r > 0) {
+				return _eliminar(n->right, e);
+			}else if(r < 0) {
+				return _eliminar(n->left, e);
+			}else{ // r==0 es porque se encontró el elemento e en el arbol
+				if (n->right == nullptr && n->left == nullptr) {//caso 1
+					delete n;
+					n = nullptr;
+					return;
+				}else if(n->left == nullptr) { //caso 2
+					n = n->right;
+					return;
+				}else if(n->right == nullptr) { //caso 3
+					n = n->left;
+					return;
+				}else{ //caso 4
+					Node<T>* aux = n->right; //Se establece buscar el menor elemento por la derecha
+					while (aux->left != nullptr) {
+						aux = aux->left; //Se obtiene la hoja menor
+					}
+					n->value = aux->value; //Se actualiza el elemento en el nodo raiz y
+					return _eliminar(n->right, aux->value); //se envía a eliminar el elemento en el arbol por la derecha
+				}
+			}
+		}
+		
+	}
+};
+class Transac
+{
+private:
+	//invoice->factura
+	//stockcode->numero de inventario
+	ll InvoiceNo, Quantity, CustomerID;
+	string Description, InvoiceDate, Country, StockCode;
+	float UnitPrice;//precio unitario
+public:
+	Transac(ll CustomerID = NULL, ll InvoiceNo = NULL, string StockCode = "", string Description = "",
+		ll Quantity = NULL, string InvoiceDate = "", float UnitPrice = NULL,
+		string Country = "") {
+		this->InvoiceNo = InvoiceNo;
+		this->Quantity = Quantity;
+		this->CustomerID = CustomerID;
+		this->Description = Description;
+		this->InvoiceDate = InvoiceDate;
+		this->Country = Country;
+		this->StockCode = StockCode;
+		this->UnitPrice = (UnitPrice);
+	}
+	~Transac() {}
+
+	string getStrCustomerID() {
+		return std::to_string(this->CustomerID);
+	}
+	int getCusID() {
+		return this->CustomerID;
+	}
+	string getCountry() { return Country; }
+	friend ostream& operator<<(ostream& o, const Transac& tr) {
+		o << tr.CustomerID << "\t" << tr.Description << "\t" << tr.Country << "\n";
+		return o;
+	}
+};
+template<class T>
+class Hashtable
+{
+private:
+	vector<list<T>> ht;
+	function<int(T)> hashfunction;
+	function<int(string)> hashfunctionstr2;
+	function<void(list<T>)> showlist;
+	int _size;
+public:
+	Hashtable() = default;
+	Hashtable(int _size, function<int(T)> hashfunction, function<void(list<T>)> showlist)
+		:hashfunction(hashfunction),showlist(showlist){
+		this->_size = _size;
+		ht.resize(_size);
+	}
+	void insert(T& dato) {
+		int pos = hashfunction(dato);
+		if (pos<_size && pos>-1) {
+			ht.at(pos).push_back(dato);
+		}
+	}
+	/*bool existe(T dato) {
+		int pos = hashfunction(dato);
+		if (ht.at(pos).front())
+		{
+
+		}
+	}*/
+	~Hashtable() {
+		eraseAll();
+	}
+	void searchAnd_show(string line) {
+		int pos = hashfunctionstr2(line);
+		if (pos > _size || pos < 0) {
+			return;
+		}
+		showlist(ht.at(pos));
+	}
+	void eraseAll() {
+		for (int i = 0; i < ht.size(); i++) {
+			ht.at(i).clear();
+		}
+		ht.clear();
+	}
+};
+template<class T>
+class BlockChain
+{
+	Bloque<T>* begin;
+	Bloque<T>* end;
+	Bloque<T>* aux;
+	int _size;
+	function<ll(T)> hashfunction;
+	function<void(T)> show;
+public:
+	BlockChain() = default;
+	BlockChain(function<ll(T)> hashfunction,function<void(T)> show)
+		:hashfunction(hashfunction),show(show){
+		aux=end = begin = nullptr;_size = 0;
+	}
+	~BlockChain() {
+		eraseAll();
+	}
+	void eraseAll() {
+		while (_size > 0) {
+			pop_front();
+		}
+	}
+	void pop_front() {
+		if (_size == 0) { return; }
+		if (_size==1){
+			delete begin;
+			begin = nullptr;
+		}else{
+			aux = begin;
+			begin = begin->next;
+			begin->back = nullptr;
+			aux->next = nullptr;
+			delete aux;
+			aux = nullptr;
+		}
+		--_size;
+		if (_size==1){
+			end = begin;
+		}
+		if (_size==0){
+			end = begin = nullptr;
+		}
+	}
+	void push_back(T dato) {
+		Bloque<T>* nuevo = new Bloque<T>(dato);
+		if (_size == 0) {
+			begin = end = nuevo;
+		}else{
+			nuevo->back = end;
+			end->next = nuevo;
+			end = nuevo;
+			nuevo->prev = nuevo->back->hash;
+		}
+		++_size;
+		string* line=new string();
+		*line= std::to_string(hashfunction(dato));
+		nuevo->hash = line;
+	}
+
+	template<typename Dato>//dato del nodo del tree
+	void traspasarRef(Tree<pair<Bloque<T>*, Dato*>>& tree,
+		function<void(Tree<pair<Bloque<T>*, Dato*>>&, Bloque<T>*)> insert_in) {
+		aux = begin;
+		while (aux != nullptr){
+			insert_in(tree,aux);
+			aux = aux->next;
+		}
+	}
+	template<typename Dato>//dato del nodo del tree
+	void traspasarRef(Hashtable<pair<Bloque<T>*, Dato*>>& hash,
+		function<void(Hashtable<pair<Bloque<T>*, Dato*>>&, Bloque<T>*)> insert_in) {
+		aux = begin;
+		while (aux != nullptr){
+			insert_in(hash, aux);
+			aux = aux->next;
+		}
+	}
+	void Mostrardato(T& dato) {
+		show(dato);
+	}
+	void print() {
+		aux = begin;
+		while (aux!=nullptr){
+			cout << aux->dato;
+			aux = aux->next;
+		}
+		aux = nullptr;
+	}
+	void push_front(T dato) {
+		Bloque<T>* nuevo = new Bloque<T>(dato);
+		if (_size == 0) {
+			begin = end = nuevo;
+		}else{
+			begin->back = nuevo;
+			nuevo->next = begin;
+			begin = nuevo;
+		}
+		++_size;
+	}
+	size_t size() {
+		return _size;
+	}
+	void showByCondition(function<bool(T,T)> comp,T dato) {
+		aux = begin;
+		while (aux!=nullptr){
+			if (comp(aux->dato,dato)){
+				show(aux->dato);
+			}
+			aux=aux->next;
+		}
+		aux=nullptr;
+	}
+	Bloque<T>*& End(){
+		return this->end;
+	}
+};
+
+class DataSet{
+private:
+	BlockChain<vector<Transac*>> blockchain;
+	Tree<pair<Bloque<vector<Transac*>>*, Transac*>> treeid;
+	Tree<pair<Bloque<vector<Transac*>>*, Transac*>> treeiniciales;
+	Tree<pair<Bloque<vector<Transac*>>*,Transac*>> treefinales;
+	function<int(vector<Transac*>)> hash;
+	Hashtable<pair<Bloque<vector<Transac*>>*, Transac*>> ht;
+public:
+	DataSet(string archiname, function<int(vector<Transac*>)> hash){
+		this->hash = hash;
+		int sizeht = 0;
+		auto comp = [&](pair<Bloque<vector<Transac*>>*,Transac*> a,
+			pair<Bloque<vector<Transac*>>*, Transac*> b)->int {
+			int compa, compb;
+			compa = (*a.second).getCusID();
+			compb = (*b.second).getCusID();
+			if (compa > compb){return 1;}
+			else if(compa == compb){return 0;}
+			return -1;
+		};
+		auto comp2 = [&](pair<Bloque<vector<Transac*>>*, Transac*> a,
+			pair<Bloque<vector<Transac*>>*, Transac*> b)->int {
+			string compa, compb;
+			compa = (*a.second).getStrCustomerID();
+			compb = (*b.second).getStrCustomerID();
+			string srl = compb.substr(0, compa.length());
+			if (compa.compare(srl) > 0) { return 1; }
+			else if (compa.compare(srl) == 0) { return 0; }
+			return -1;
+		};
+		auto comp3 = [&](pair<Bloque<vector<Transac*>>*, Transac*> a,
+			pair<Bloque<vector<Transac*>>*, Transac*> b)->int {
+				string compa, compb;
+				compa = (*a.second).getStrCustomerID();
+				compb = (*b.second).getStrCustomerID();
+				string srl = compb.substr(compb.length() - 3, compb.length());
+				string srl2 = compa.substr(compa.length()-3, compa.length());
+				if (srl2.compare(srl) > 0) { return 1; }
+				else if (srl2.compare(srl) == 0) { return 0; }
+				return -1;
+		};
+		auto insert_inTree = [&](Tree<pair<Bloque<vector<Transac*>>*,Transac*>>& tree,
+			Bloque<vector<Transac*>>* bloque) {
+			for (int i = 0; i < (*(*(bloque))).size(); i++){
+				tree.insert(make_pair(bloque, (*(*(bloque))).at(i)));
+			}
+		};
+		auto insert_inHash2 = [&](Hashtable<pair<Bloque<vector<Transac*>>*,Transac*>>& ht,
+			Bloque<vector<Transac*>>* bloque){
+				for (int i = 0; i < (*(*(bloque))).size(); i++){
+					ht.insert(make_pair(bloque, (*(*(bloque))).at(i)));
+				}
+		};
+		auto show = [&](vector<Transac*> trans)->void {
+			for (size_t i = 0; i < trans.size(); i++){
+				cout << *(trans.at(i));
+			}
+		};
+		auto show2 = [&](pair<Bloque<vector<Transac*>>*,Transac*> trans)->void {
+			cout << *(trans.second);
+		};
+		auto functionhashREAD = [&](int numhash)->int {
+			return (numhash / 30 + numhash / 21);
+		};
+		auto functionhash = [&](pair<Bloque<vector<Transac*>>*, Transac*> par)->int {
+			int numhash = functionhashREAD((*par.second).getCusID());
+			return numhash;
+		};
+		auto showlist = [&](list<pair<Bloque<vector<Transac*>>*, Transac*>> lista)->void {
+			for (auto i : lista) {
+				cout << i.second;
+			}
+		};
+		blockchain = BlockChain<vector<Transac*>>(hash,show);
+		treeid = Tree<pair<Bloque<vector<Transac*>>*, Transac*>>(comp, show2);
+		treeiniciales = Tree<pair<Bloque<vector<Transac*>>*, Transac*>>(comp2, show2);
+		treefinales = Tree<pair<Bloque<vector<Transac*>>*, Transac*>>(comp3,show2);
+		readAchi(archiname, sizeht, functionhashREAD);
+		ht = Hashtable<pair<Bloque<vector<Transac*>>*, Transac*>>(sizeht, functionhash, showlist);
+		blockchain.traspasarRef<Transac>(treeid, insert_inTree);
+		//blockchain.traspasarRef<Transac>(treeiniciales, insert_inTree);
+		blockchain.traspasarRef<Transac>(treefinales, insert_inTree);
+		blockchain.traspasarRef<Transac>(ht, insert_inHash2);
+	}
+	~DataSet(){
+		blockchain.~BlockChain();
+		treeid.~Tree();
+		treeiniciales.~Tree();
+		treefinales.~Tree();
+	}
+	void readAchi(string archiname, int& sizeht, function<int(int)> hashfunction){
+		string line; size_t cont=0;
+		ll InvoiceNo, Quantity, CustomerID;
+		string Description, InvoiceDate, Country, StockCode;
+		float UnitPrice;
+		vector<Transac*> vect;
+		int num = 0;
+		int num1 = 0;
+		ifstream input(archiname);
+		std::getline(input, line);
+		while (std::getline(input, line, ',')){
+			switch (++cont){
+			case 1:
+				InvoiceNo=std::stoll(line);
+				num = rand() % 10 + 5;
+				break;
+			case 2:
+				StockCode = line;
+				break;
+			case 3:
+				Description =line;
+				break;
+			case 4:
+				Quantity = stoll(line);
+				break;
+			case 5:
+				InvoiceDate = line;
+				break;
+			case 6:
+				UnitPrice = stoll(line);
+				break;
+			case 7:
+				CustomerID = stoll(line);
+				num1 = CustomerID;
+				num1 = hashfunction(num1);
+				if (num1 > sizeht){
+					sizeht = num1;
+				}
+				getline(input, line, '\n');
+				Country = line;
+				if (vect.size()>num){
+					blockchain.push_back(vect);
+					vect.clear();
+				}
+				vect.push_back(new Transac(CustomerID,InvoiceNo, StockCode,
+					Description, Quantity, InvoiceDate, UnitPrice,Country));
+				cont = 0;
+				break;
+			}
+		}
+		input.close();
+		//auto fun = [&](BlockChain<Transac>::Iterator& it)->Bloque<Transac>& {return it.getaux(); };
+		
+		//tree1.insertblock<BlockChain<Transac>::Iterator, function<Bloque<Transac>& (BlockChain<Transac>::Iterator&)>>(blockchain.Ibegin(), blockchain.Iend(), fun);
+	}
+	Transac* nuevatrasn(string line) {
+		ll InvoiceNo, Quantity=0;
+		string Description, InvoiceDate, Country, StockCode;
+		float UnitPrice;
+		do{
+			system("cls");
+			cout << "Ingrese el valor para InvoiceNo: \n";
+			cin >> InvoiceNo;
+		} while (InvoiceNo==0);
+		do {
+			system("cls");
+			cout << "Ingrese el valor para Quantity: \n";
+			cin >> Quantity;
+		} while (Quantity == 0);
+		do {
+			system("cls");
+			cout << "Ingrese el valor para Description: \n";
+			cin >> Description;
+		} while (Description == "");
+		do {
+			system("cls");
+			cout << "Ingrese el valor para InvoiceDate: \n";
+			cin >> InvoiceDate;
+		} while (InvoiceDate == "");
+		do {
+			system("cls");
+			cout << "Ingrese el valor para Country: \n";
+			cin >> Country;
+		} while (Country == "");
+		do {
+			system("cls");
+			cout << "Ingrese el valor para StockCode: \n";
+			cin >> StockCode;
+		} while (StockCode == "");
+		do {
+			system("cls");
+			cout << "Ingrese el valor para UnitPrice: \n";
+			cin >> UnitPrice;
+		} while (UnitPrice == 0.00f);
+		return new Transac(std::stoll(line), InvoiceNo, StockCode, Description, Quantity, InvoiceDate, UnitPrice, Country);
+	}
+	void Menu() {
+		int opc = 0;
+		string line;
+		string line2;
+		bool valor;
+		Bloque<vector<Transac*>>* aux =new Bloque<vector<Transac*>>();
+		vector<Transac*> aux2;
+		auto comp4 = [&](pair<Bloque<vector<Transac*>>*, Transac*>& pardato,
+			pair<Bloque<vector<Transac*>>*, Transac*>& par)->int {
+				string dato = (*pardato.second).getStrCustomerID();
+				string dato2 = (*par.second).getStrCustomerID();
+				string strl = dato2.substr(0, dato.length());
+				if (dato.compare(strl) == 0){return 0;}
+				else if (dato.compare(strl) < 0) { return -1; }
+				else if (dato.compare(strl) > 0) { return 1; }
+		};
+		auto comp6 = [&](pair<Bloque<vector<Transac*>>*, Transac*>& pardato,
+			pair<Bloque<vector<Transac*>>*, Transac*>& par)->int {
+				string dato = (*pardato.second).getStrCustomerID();
+				string dato2 = (*par.second).getStrCustomerID();
+				string strl = dato2.substr(dato2.length()-dato.length(), dato2.length());
+				if (dato.compare(strl) == 0) { return 0; }
+				else if (dato.compare(strl) < 0) { return -1; }
+				else if (dato.compare(strl) > 0) { return 1; }
+		};
+		auto comp5 = [&](pair<Bloque<vector<Transac*>>*, Transac*>a, 
+			pair<Bloque<vector<Transac*>>*, Transac*> b)->bool {
+			if ((*a.second).getCusID()==(*b.second).getCusID()){
+				return true;
+			}
+			return false;
+		};
+		auto comp7 = [&](pair<Bloque<vector<Transac*>>*, Transac*>a,
+			pair<Bloque<vector<Transac*>>*, Transac*> b)->bool {
+				string dato = (*a.second).getStrCustomerID();
+				string dato2 = (*b.second).getStrCustomerID();
+				string strl = dato2.substr(0, dato.length());
+				if (dato.compare(strl) == 0) { return 1; }
+				else return -1;
+		};
+		auto comp8 = [&](pair<Bloque<vector<Transac*>>*, Transac*>a,
+			pair<Bloque<vector<Transac*>>*, Transac*> b)->bool {
+				string dato = (*a.second).getStrCustomerID();
+				string dato2 = (*b.second).getStrCustomerID();
+				string strl = dato2.substr(dato2.length() - dato.length(), dato2.length());
+				if (dato.compare(strl) == 0) { return 1; }
+				else return -1;
+		};
+		auto rellenarvect = [&](Bloque<vector<Transac*>>*&end,Transac* trans) {
+			(**end).push_back(trans);
+		};
+		while (true){
+			Transac* nueva;
+			do{
+				system("cls");
+				cout << "\n1._Esta Contenido este Usuario en el BlockChain\n";
+				cout << "\n2._Lista de Usuarios que inician con:\n";
+				cout << "\n3._Lista de Usuarios que finalizan con:\n";
+				cout << "\n4._Mostrar todas las transacciones del usuario con ID:\n";
+				cout << "\n5._Ingreso de NUEVA Transaccion\n";
+				cout << "\n6._Ingreso de NUEVO Usuario con ID:\n";
+				cout << "\n7._Buscar por HASHTABLE:\n";
+				cout << "\n8._EXIT\n";
+				cin >> opc;
+			} while (opc < 1 || opc>8);
+			switch (opc) {
+			case 1:
+				cout << "\nIngrese el usuario ID a Buscar:\n";
+				cin >> line;
+				nueva = new Transac(std::stoll(line));
+				(*(*(aux))).push_back(nueva);
+				valor = this->treeid.toFind(make_pair(aux, nueva));
+				if (valor){
+					cout << "\nEl usuario insertado SI esta contenido\n";
+				}else{
+					cout << "\nEl usuario insertado NO esta contenido\n";
+				}
+				(*(*(aux))).clear();
+				system("pause");
+				break;
+			case 2:
+				cout << "\nIngrese el ID del usuario:\n";
+				cin >> line;
+				nueva = new Transac(std::stoll(line));
+				(*(*aux)).push_back(nueva);
+				treeid.printwithCondition(make_pair(aux, nueva),comp4,comp7);
+				(*(*aux)).clear();
+				system("pause");
+				break;
+			case 3:
+				cout << "\nIngrese el ID del usuario:\n";
+				cin >> line;
+				nueva = new Transac(std::stoll(line));
+				aux2.push_back(nueva);
+				treefinales.printwithCondition(make_pair(aux, nueva), comp6, comp8);
+				aux2.clear();
+				system("pause");
+				break;
+			case 4:
+				cout << "\nIngrese el ID del usuario:\n";
+				cin >> line;
+				nueva = new Transac(std::stoll(line));
+				(*(*(aux))).push_back(nueva);
+				valor=treeid.printSector(make_pair(aux, nueva),comp5);
+				if (valor==false){
+					cout << "No existe el usuario con ID: " << line << "\n";
+				}
+				(*(*(aux))).clear();
+				system("pause");
+				break;
+			case 5:
+				cout << "\nIngrese el ID del usuario:\n";
+				cin >> line;
+				nueva = nuevatrasn(line);
+				(*(*(aux))).push_back(nueva);
+				if ((*(*blockchain.End())).size()>15){
+					rellenarvect(blockchain.End(),nueva);
+				}else{
+					blockchain.push_back((**aux));
+				}
+				treeid.insert(make_pair(blockchain.End(), nueva));
+				(*(*(aux))).clear();
+				system("pause");
+				break;
+			case 6:
+				cout << "\nIngrese el ID del usuario:\n";
+				cin >> line;
+				cout << "\nIngrese Contrasena para el nuevo usuario\n";
+				cin >> line2;
+				nueva= nuevatrasn(line);
+				(**aux).push_back(nueva);
+				if ((*(*blockchain.End())).size() < 15) {
+					rellenarvect(blockchain.End(), nueva);
+				}else{
+					blockchain.push_back((**aux));
+				}
+				treeid.insert(std::make_pair(blockchain.End(),nueva));
+				(*(*aux)).clear();
+				system("pause");
+				break;
+			case 7:
+				cout << "\nIngrese el ID del usuario:\n";
+				cin >> line;
+				ht.searchAnd_show(line);
+				break;
+			case 8:
+				exit(NULL);
+				break;
+			default: break;
+			}
+		}
+		delete aux;
+	}
+};
+int main() {
+	auto hashfun = [&](vector<Transac*>& trans)->ll {
+		ll suma = 0;
+		for (int i = 0; i < trans.size(); i++){
+			string line = (*trans.at(i)).getStrCustomerID();
+			for (int j = 1; j <= line.length(); j++) {
+				suma += std::pow(std::stoi(std::to_string(line.at(j - 1))), j);
+			}
+		}
+		return suma;
+	};
+	DataSet data = DataSet("data.csv",hashfun);
+	data.Menu();
+	//vector<int*> vectr = vector<int>();
+	return 0;
+}
+int funcion(string line) {
+	ll suma = 0;
+	for (size_t i = 0; i < line.length(); i++) {
+		suma += std::pow(line.at(i), i);
+	}
+	return (suma);
+}
+int main1() {
+	/*auto hashfunction = [](int a)->string {return std::to_string(a + 3); };
+	BlockChain<int> blocki = BlockChain<int>(hashfunction);
+
+	blocki.push_back(3);
+	blocki.push_back(5);
+	blocki.push_back(3);
+	blocki.push_back(2);
+	blocki.push_back(1);
+	 
+	auto comp1 = [](Bloque<int>& a, Bloque<int>& b) ->bool {return *(a) > *(b); };
+	auto comp2 = [](Bloque<int>& a, Bloque<int>& b) ->bool {return *(a)== *(b); };
+	auto comp3 = [](Bloque<int>& a, Bloque<int>& b)->int { 
+		if (*a > * b) { return 1; }
+		else if (*a == *b){return 0;}
+		return -1;
+	};
+	auto fun = [&](BlockChain<int>::Iterator& it)->Bloque<int>& {return it.getaux(); };
+	Tree<Bloque<int>&> tree(comp3);*/
+	
+	//BlockChain<int> blocki;
+	//tree.insertblock<BlockChain<int>::Iterator&,function<Bloque<int>&(BlockChain<int>::Iterator&)>>(blocki.Ibegin(),blocki.Iend(),fun);
+	//Transac trans = Transac("123234","3245345","465756","ooa","23","2002","3","EEUU");
+	//cout<<trans;
+	
+	system("pause");
+	return 0;
+}
