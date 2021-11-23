@@ -1,0 +1,1696 @@
+Air Dron Voyage 
+
+Feature: HU01: Como cliente estresado o piloto de drones quiero registrarme en la app para acceder a él. 
+
+ 
+ 
+
+    Scenario:   E01: Registrar usuario con datos validos. 
+
+        Given que me encuentro en el formato de registro 
+
+        When Ingrese mi correo, nombre de usuario, contraseña y presione el bóton de guardar 
+
+        Then estaré registrado en la base de datos y me enviará un mensaje de confirmación 
+
+ 
+ 
+
+        Examples: 
+
+            | Correo              | Nombre de usuario   | contraseña    |       Mensaje de Confirmacion         | 
+
+            | valdivia@gmail.com  | valdivia2960        | 4$65g@3&zAq   | "Su Cuenta se ha registrado con Exito"| 
+
+ 
+ 
+
+    Scenario:   E02: Registrar usuarios estresados (jovenes y mayores estresados) con correo no valido. 
+
+        Given que me encuentro en el formato de registro 
+
+        When ingrese mi correo incorrectamente, nombre de usuario, contraseña y presione el botón guardar 
+
+        Then me mandara un mensaje de error para que vuelva a insertar valores correctos ("Vuelva a ingresar su correo") 
+
+ 
+ 
+
+        Examples: 
+
+            | Correo              | Nombre de Usuario | Contraseña  |        Mensaje de Error        | 
+
+            | valdivia@mgial.com  |  valdivia2960     | 4$65g@3&zAq |   "Vuelva a ingresar su correo"       | 
+
+ 
+ 
+ 
+
+    Scenario: E03: Registrar usuarios estresados (jovenes y mayores estresados) con nombre de usuario incorrecto. 
+
+        Given que me encuentro en el formato de registro 
+
+        When  ingrese mi correo, nombre de usuario incorrectamente, contraseña y presione el botón guardar 
+
+        Then me mandara un mensaje de error para que vuelva a insertar valores correctos 
+
+ 
+ 
+
+        Examples: 
+
+            | Correo              | Nombre de Usuario | Contraseña |            Mensaje de Error             | 
+
+            | valdivia@gmail.com  | @$#%&*            | 4$65g@3&zAq| "Vuelva a ingresar su nombre de usuario"| 
+
+     
+
+    Scenario: E04: Registrar usuarios estresados (jovenes y mayores estresados) con ningun dato. 
+
+        Given que me encuentro en el formato de registro 
+
+        When  no ingrese mi correo, ni mi nombre de usuario, ni mi contraseña y presione el botón guardar 
+
+        Then me mandara un mensaje de error para que vuelva a insertar valores correctos 
+
+ 
+ 
+
+        Examples: 
+
+            | Correo | Nombre de Usuario | Contraseña  |       Mensaje de Error       | 
+
+            |        |                   |             | "Vuelva a ingresar sus datos"| 
+
+ 
+ 
+
+    Scenario: E05: Registrar usuario con datos repetidos en la base de datos 
+
+        Given que eme encuentro en el formato de registro 
+
+        When ingrese un correo repetido o nombre de usuario repetido, contraseña y presione el boton guardar 
+
+        Then me mandara un mensaje de error para que inserte nuevos valores 
+
+ 
+ 
+
+        Examples: 
+
+            | Correo                                                   | Nombre de Usuario  | Contraseña  |       Mensaje de Error       | 
+
+            | valdivia1329@gmail.com (correo ya en la base de datos)   |  valdivia2960      | 4$65g@3&zAq | "Este correo ya esta registrado"| 
+
+ 
+ 
+
+Feature: HU02:  Como piloto de drones o cliente que solicita quiero la opción de actualizar mi contraseña para acceder al sistema en caso no la recuerde. 
+
+ 
+ 
+
+    Scenario: E01: Actualizar la contraseña de la cuenta con una contraseña segura. 
+
+        Given que no recuerdo mi contraseña 
+
+        When presiono el botón "Olvidé mi contraseña" 
+
+        And identifico mi identidad como piloto de dron, 
+
+        Then el sistema abre el formulario de cambio de contraseña,  
+
+        And ingreso una contraseña segura en ambas casillas "Escribir contraseña" y "Confirmar constraseña", el sistema me cambiara la constraseña de la cuenta 
+
+ 
+ 
+
+        Examples: 
+
+            | Escribir Contraseña | Confirmar constraseña| 
+
+            | 4$65g@3&zAq         | 4$65g@3&zAq          |  
+
+ 
+ 
+
+    Scenario: E02: Actualizar la contraseña de la cuenta con una contraseña debil 
+
+        Given que no recuerdo mi contraseña 
+
+        When presiono el botón "Olvidé mi contraseña"   
+
+        And identifico mi identidad como piloto de dron 
+
+       And el sistema abre el formulario de cambio de contraseña 
+
+       And ingreso una contraseña débil o corta en ambas casillas "Escribir contraseña" y "Confirmar contraseña", 
+
+       Then el sistema mostrará un mensaje indicando que la contraseña es muy débil. 
+
+ 
+ 
+
+       Examples: 
+
+            | Escribir Contraseña | Confirmar constraseña| 
+
+            | 12345               | 12345                |  
+
+ 
+ 
+
+    Scenario: E03:  Actualizar la contraseña de la cuenta con una contraseña igual a la actual. 
+
+        Given  que no recuerdo mi contraseña  
+
+        When presiono el botón "Olvidé mi contraseña",  
+
+        And identifico mi identidad como piloto de dron  
+
+        And  el sistema abre el formulario de cambio de contraseña 
+
+        And  ingreso mi contraseña actual en ambas casillas "Escribir contraseña" y "Confirmar contraseña" 
+
+        And presiono el botón cambiar. 
+
+        Then el sistema mostrará un mensaje indicando que no se puede cambiar a la misma contraseña. 
+
+ 
+ 
+
+        Examples: 
+
+            | Escribir Contraseña | Confirmar constraseña|                 Mensaje                   | 
+
+            |  4$65g@3&zAq        |  4$65g@3&zAq         |"No se puede Cambiar a la Misma contraseña"| 
+
+ 
+ 
+
+    Scenario: E04: Actualizar la contraseña de la cuenta con una casilla en blanco. 
+
+        Given que no recuerdo mi contraseña 
+
+        When presiono el botón "Olvidé mi contraseña" 
+
+         And identifico mi identidad como piloto de dron  
+
+        And  el sistema abre el formulario de cambio de contraseña 
+
+        And no ingreso mi contraseña actual en ambas casillas "Escribir contraseña" y "Confirmar contraseña" 
+
+        And presiono el botón cambiar. 
+
+        Then el sistema mostrará un mensaje indicando que falta llenar una casilla con datos. 
+
+ 
+ 
+
+        Examples: 
+
+            | Escribir Contraseña | Confirmar constraseña |   Mensaje             | 
+
+            |  4$65g@3&zAq        |                       |"Falta rellenar datos" | 
+
+    Scenario: E05: Actualizar la contraseña de la cuenta con ambas casillas en blanco. 
+
+        Given que no recuerdo mi contraseña 
+
+        When presiono el botón "Olvidé mi contraseña" 
+
+         And identifico mi identidad como piloto de dron  
+
+        And  el sistema abre el formulario de cambio de contraseña 
+
+        And no ingreso mi contraseña ni en la casilla "Escribir contraseña" o  "Confirmar contraseña" 
+
+        And presiono el botón cambiar. 
+
+        Then el sistema mostrará un mensaje indicando que falta llenar una casilla con datos. 
+
+ 
+ 
+
+        Examples: 
+
+            | Escribir Contraseña | Confirmar constraseña|   Mensaje            | 
+
+            |                     |                      |"Falta rellenar datos"| 
+
+ 
+ 
+
+    Scenario: E06:  Actualizar la contraseña con contraseñas diferentes en ambas casillas. 
+
+        Given que no recuerdo mi contraseña 
+
+        When presiono el botón "Olvidé mi contraseña" 
+
+        And identifico mi identidad como piloto de dron  
+
+        And el sistema abre el formulario de cambio de contraseña 
+
+        And  ingreso contraseñas diferentes en las casillas "Escribir contraseña" y "Confirmar contraseña" 
+
+        And presiono el botón cambiar. 
+
+        Then el sistema mostrará un mensaje indicando la contraseña debe ser la misma. 
+
+ 
+ 
+
+        Examples: 
+
+            | Escribir Contraseña | Confirmar constraseña|   Mensaje               | 
+
+            |   4$65g@3&zAq       |      8%64y06&zAq     |"Deben de ser las mismas"| 
+
+ 
+ 
+
+Feature: HU03: Como persona que solicita un sencillo uso de la aplicación quiero que el sistema guarde mi contraseña para acceder más rápido al sistema. 
+
+     
+
+    Scenario: E01: Guardar contraseña en el dispositivo después de registrar una cuenta nueva. 
+
+        Given que he terminado el registro de usuario con éxito 
+
+        When presione el botón continuar, 
+
+        And  el sistema me muestra una ventana indicando si se desea guardar la contraseña  
+
+        And elijo la opción "Guardar". 
+
+        Then el sistema guardará la contraseña en el dispositivo recordándola para ingresar después. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Continuar | Boton Guardar| Contraseña guardada| 
+
+            | Seleccionado    | Seleccionado | true               | 
+
+ 
+ 
+
+    Scenario: E02:  No guardar la contraseña en el dispositivo después de registrar una cuenta nueva. 
+
+        Given que he terminado el registro de usuario con éxito 
+
+        When presione el botón continuar, 
+
+        And  el sistema me muestra una ventana indicando si se desea guardar la contraseña  
+
+        And elijo la opción "Ahora no". 
+
+        Then el sistema no guardará la contraseña en el dispositivo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Continuar | Boton Guardar   | Contraseña guardada| 
+
+            | Seleccionado    | No Seleccionado | False              |         
+
+ 
+ 
+
+    Scenario: E03: Guardar la contraseña en el dispositivo después acceder a una cuenta existente 
+
+        Given que he terminado el registro de usuario con éxito 
+
+        When presione el botón continuar, 
+
+        And  el sistema me muestra una ventana indicando si se desea guardar la contraseña  
+
+        And elijo la opción "Guardar". 
+
+        Then el sistema guardará la contraseña en el dispositivo recordándola para ingresar después. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Continuar | Boton Guardar| Contraseña guardada| 
+
+            | Seleccionado    | Seleccionado | True               |      
+
+ 
+ 
+
+    Scenario: E04: No guardar la contraseña en el dispositivo después de acceder a una cuenta existente. 
+
+        Given que he terminado el registro de usuario con éxito 
+
+        When presione el botón continuar, 
+
+        And  el sistema me muestra una ventana indicando si se desea guardar la contraseña  
+
+        And elijo la opción "Ahora no". 
+
+        Then  el sistema no guardará la contraseña en el dispositivo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Continuar | Boton Guardar   | Contraseña guardada| 
+
+            | Seleccionado    | No Seleccionado | False              |  
+
+ 
+ 
+
+    Scenario: E05: Guardar la contraseña en el dispositivo después de cambiar la contraseña. 
+
+        Given que ya cambié mi contraseña con éxito. 
+
+        When presione el botón "Cambiar". 
+
+        And el sistema me muestra una ventana indicando si se desea guardar la contraseña. 
+
+        And elijo la opción "Guardar". 
+
+        Then el sistema guardará la contraseña en el dispositivo recordándola para ingresar después. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Continuar | Boton Guardar| Contraseña guardada| 
+
+            | Seleccionado    | Seleccionado |     True           |  
+
+ 
+ 
+
+    Scenario: E06: No guardar la contraseña en el dispositivo después de cambiar la contraseña. 
+
+        Given que ya cambié mi contraseña con éxito. 
+
+        When presione el botón "Cambiar". 
+
+        And el sistema me muestra una ventana indicando si se desea guardar la contraseña. 
+
+        And elijo la opción "Ahora no". 
+
+        Then el sistema no guardará la contraseña en el dispositivo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Continuar | Boton Guardar   | Contraseña guardada| 
+
+            | Seleccionado    | No Seleccionado |    False           | 
+
+ 
+ 
+
+Feature: HU04: Como piloto de drones o cliente estresado quiero la opción de autenticar mi cuenta para una mayor seguridad. 
+
+ 
+ 
+
+    Scenario: E01: Autenticar cuenta con datos validos 
+
+        Given que me encuentro en mi perfil 
+
+        When le doy al botón "Verificar cuenta" 
+
+        And se abre un formulario donde puedo elegir entre "Verificar con correo electrónico" o "Verificar con número de teléfono" 
+
+        And lleno los datos correctamente y presiono "Verificar".  
+
+        Then se autentica la cuenta y sale un mensaje de confirmación. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Verificar Cuenta | Boton de eleccion para verificar | Codigo Valido | Validado|Mensaje de Confirmacion| 
+
+            | True                   | True                             | $2$56         |True     |  Se valido tu cuenta  |             | 
+
+ 
+ 
+
+     Scenario: E02: Autenticar cuenta con datos invalidos 
+
+        Given que me encuentro en mi perfil 
+
+        When le doy al botón "Verificar cuenta" 
+
+        And se abre un formulario donde puedo elegir entre "Verificar con correo electrónico" o "Verificar con número de teléfono" 
+
+        And lleno los datos incorrectamente y presiono "Verificar".  
+
+        Then se autentica la cuenta y sale un mensaje de confirmación. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton Verificar Cuenta | Boton de eleccion para verificar | Codigo Valido | Validado|     Mensaje de Confirmacion              | 
+
+            | True                   | True                             | 1234          | False   | No se valido tu cuenta Intente nuevamente| 
+
+ 
+ 
+
+Feature: HU05: Como cliente dudoso quiero hablar con el piloto para que me recomiende lugares de viaje. 
+
+ 
+ 
+
+    Scenario: E01: Interactuar con el piloto de drones. 
+
+        Given que me encuentro en el panel de viaje programados 
+
+        When ingrese a "Hablar con el piloto" e ingrese en formato texto mis dudas sobre qué rutas tomar.  
+
+        Then el piloto recibirá el mensaje y podrá responder de la misma manera. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton "Hablar con el piloto" | Dudas en formato texto                                         | Se enviara el Mensaje| 
+
+            | True                         | "Se podra viajar hoy a algun lugar cerca de la torre Eiffel"   | True             | 
+
+     
+
+ 
+ 
+
+    Scenario: E02:  Interactuar con el piloto de drones con contenido multimedia. 
+
+        Given que me encuentro en el panel de viajes programados 
+
+        When ingrese a "Hablar con el piloto", añada contenido multimedia con el botón "Abrir multimedia" y presione el botón enviar.  
+
+        Then el piloto recibirá el mensaje y podrá responder de la misma manera. 
+
+ 
+ 
+
+        Examples: 
+
+           | Boton "Hablar con el piloto" | Abrir Multimedia | Se enviara el archivo Multimedia| 
+
+           |         True                 | True             |              True               | 
+
+ 
+ 
+
+Feature: HU06: Como cliente del servicio quiero enviar mis comentarios en formato texto sobre el servicio al piloto para mejorar el servicio. 
+
+ 
+ 
+
+    Scenario: E01: Interactuar con el piloto que ya haya dado su servicio en formato texto. 
+
+        Given que me encuentro en el perfil del piloto 
+
+        When  ingrese a la opción "enviar mensaje" 
+
+        And escriba en formato texto un mensaje y presione el botón enviar. 
+
+        Then  el piloto recibirá un mensaje y podrá responder de la misma manera. 
+
+ 
+ 
+
+        Examples: 
+
+            | Se Presiona boton de enviar mensaje | Mensaje                                                                            | Piloto recibe mensaje | 
+
+            | True                                | "Le recomiendo que para proximos viajes pueda ser mas socialble con las personas"  |  True  |                                    
+
+  
+
+     
+
+    Scenario: E02: Interactuar con el piloto que ya haya dado su servicio con contenido multimedia. 
+
+        Given  que me encuentro en el perfil del piloto  
+
+        When  ingrese a la opción "enviar mensaje" 
+
+        And añada el contenido multimedia de con el botón "Abrir multimedia" 
+
+        And presione el botón enviar.    
+
+        Then el piloto recibirá un mensaje y podrá responder de la misma manera. 
+
+ 
+ 
+
+        Examples: 
+
+            | Opcion Enviar Mensaje | Abrir Multimedia                    | Presione Boton Enviar |Piloto recibe mensaje| 
+
+            | Presionada            | Se selecciona un archivo multimedia | Presionada            | True                | 
+
+  
+
+  
+
+Feature: HU07:  Como cliente quiero comentar al piloto en formato texto sobre mis rutas preferidas para un viaje más realista. 
+
+ 
+ 
+
+    Scenario:  E01: Interactuar con el piloto de drones en formato texto. 
+
+        Given que me encuentro en el panel de viaje programados  
+
+        When ingrese a "Hablar con el piloto" 
+
+        And  ingrese en formato texto la ruta deseada con sus preferencias y presione el botón enviar. 
+
+        Then el piloto recibirá el mensaje y podrá responder de la misma manera. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton de Hablar con el piloto | Insertar mesanje en formato texto | Boton de Enviar | 
+
+            | Presionado                     | Quiero ir a Japon                 | Presionado    | 
+
+ 
+ 
+
+    Scenario: E02:  Interactuar con el piloto de drones con contenido multimedia. 
+
+        Given que me encuentro en el panel de viajes programados  
+
+        When ingrese a "Hablar con el piloto", añada el contenido multimedia del lugar de preferencia con el botón "Abrir multimedia" y presione el botón enviar. 
+
+        Then el piloto recibirá el mensaje y podrá responder de la misma manera. 
+
+ 
+ 
+
+        Examples: 
+
+             | Boton de Hablar con el piloto | Insertar archivo multimedia                       | Boton de Enviar | 
+
+            | Presionado                     | enviar fotos o videos de los lugares que quiere ir| Presionado    | 
+
+     
+
+Feature: HU08: Como piloto de drones quiero ver los comentarios del cliente estresado para ofrecer un buen servicio. 
+
+ 
+ 
+
+    Scenario: E01: Revisar los mensajes de los clientes 
+
+        Given que estoy en mi perfil de piloto de drones  
+
+        When presiono la opción "Mensajes", se abre el panel de mensajes recientes y abra algún mensaje directo. 
+
+        Then estaré viendo el comentario que me escribió el cliente. 
+
+ 
+ 
+
+        Examples: 
+
+            | Boton "Mensajes" | Aparecen los mensajes recibidos| El piloto puede ver los mensajes | 
+
+            | Presionado       | True                           | True | 
+
+ 
+ 
+
+     Scenario: E02: Revisar los mensajes de los clientes cuando no hay ninguno. 
+
+        Given ue estoy en mi perfil de piloto de drones. 
+
+        When presiono la opción "Mensajes", se abre el panel de mensajes recientes, pero no haya ningún mensaje.  
+
+        Then estaré viendo el panel de mensajes vacío. 
+
+ 
+ 
+
+        Examples: 
+
+             | Boton "Mensajes" | Aparecen los mensajes recibidos| El piloto puede ver los mensajes | 
+
+            | Presionado        | False                          | False                            | 
+
+ 
+ 
+ 
+
+Feature:  HU09: Como cliente recurrente quiero escribir un feedback hacia los pilotos para mejorar su servicio. 
+
+ 
+ 
+
+    Scenario: E01: Añadir feedback luego del viaje programado. 
+
+        Given que me encuentro en la pantalla de "viaje terminado"  
+
+        When aparezca la ventana de "Valorar servicio", escriba un comentario corto, seleccione una cantidad de estrellas para el piloto de dron y presione el botón enviar.  
+
+        Then se agregará un comentario en la casilla de reseñas del perfil del piloto. 
+
+ 
+ 
+
+        Examples: 
+
+            |           Comentario Corto                    | Seleccione cantidad de estrellas | Presione Boton Enviar |Se añadio un comentario hacia el piloto en el valor de servicio| 
+
+            | Me gustaria que me comente mas sobre la ciudad|  Se selecciona tres estrellas    | Presionado            |                True                   | 
+
+ 
+ 
+ 
+
+    Scenario: E02:  Añadir feedback al entrar al perfil de un piloto que ya haya dado servicio a ese usuario. 
+
+        Given que me encuentro en el perfil del piloto   
+
+        When presione el botón "Añadir reseña", escriba un comentario corto, seleccione una cantidad de estrellas para el piloto de dron, presione el botón enviar.  
+
+        Then se agregará un comentario en la casilla de reseñas del perfil del piloto 
+
+ 
+ 
+
+        Examples: 
+
+            |           Añadir Reseña                           | Seleccionar estrellas     | Boton Enviar |Se añadio un comentario hacia el piloto en reseñas  | 
+
+            | Me gustaria que comente sobre la ciudad que viajo | se selecciona 4 estrellas | Presionado   |                 TRUE                               | 
+
+ 
+ 
+ 
+
+    Scenario: E03:  Añadir feedback al entrar al historial de viajes. 
+
+        Given que me encuentro en el historial de viajes  
+
+        When elija un viaje antiguo, presione el botón "Valorar servicio", escriba un comentario corto, seleccione una cantidad de estrellas para el piloto de dron y presione el botón enviar. 
+
+        Then se agregará un comentario en la casilla de reseñas del perfil del piloto.  
+
+ 
+ 
+
+        Examples: 
+
+            |           Comentario Corto                    | Seleccione cantidad de estrellas | Presione Boton Enviar |Se añadio un comentario hacia el piloto en el valor de servicio| 
+
+            | Me gustaria que me comente mas sobre la ciudad|  Se selecciona tres estrellas    | Presionado            |                True                   | 
+
+ 
+ 
+ 
+
+    Scenario: E04:  Añadir feedback para el piloto sin especificar la puntuación. 
+
+        Given que me encuentro la ventana "Valorar servicio" 
+
+        When cuando escriba un comentario corto, no seleccione una cantidad de estrellas para el piloto de dron y presione el botón enviar. 
+
+        Then me mandará un mensaje de error indicando que no se especificó la puntuación de estrellas. 
+
+ 
+ 
+
+         Examples: 
+
+            |           Comentario Corto                    | Seleccione cantidad de estrellas | Presione Boton Enviar | Mensaje de error| 
+
+            | Me gustaria que me comente mas sobre la ciudad|                                  | Presionado            | No se especifico la puntuacion de estrellas| 
+
+ 
+ 
+
+    Scenario: E05:  Añadir feedback para el piloto con el comentario vacío. 
+
+        Given  que me encuentro en la ventana "Valorar servicio" 
+
+        When no escriba ningún comentario, seleccione una cantidad de estrellas para el piloto de dron y presione el botón enviar.  
+
+        Then  me mandará un mensaje de error indicando que no se escribió ningún mensaje en el comentario. 
+
+ 
+ 
+
+         Examples: 
+
+            | Comentario Corto | Seleccione cantidad de estrellas | Presione Boton Enviar |         Mensaje de error     | 
+
+            |   " "            | Se selecciono tres estrellas     | Presionado            | No se escribio ningun mensaje| 
+
+ 
+ 
+ 
+
+    Scenario: E06: Añadir feedback para el piloto sin especificar la puntuación y con el comentario vacío. 
+
+        Given  que me encuentro en la ventana "Valorar servicio"  
+
+        When no escriba ningún comentario, no seleccione una cantidad de estrellas para el piloto de dron y presione el botón enviar. 
+
+        Then me mandará un mensaje de error indicando que no se llenó  ninguno de los campos solicitados. 
+
+ 
+ 
+
+       Examples: 
+
+            | Comentario Corto | Seleccione cantidad de estrellas | Presione Boton Enviar |              Mensaje de error                 | 
+
+            |   " "            |                                  | Presionado            | No se llenó  ninguno de los campos solicitados| 
+
+ 
+ 
+
+    Scenario: E07: Salir de añadir feedback para el piloto sin presionar enviar.  
+
+        Given que me encuentro en la ventana "Valorar servicio"  
+
+        When intente salir de la acción añadir feedback. 
+
+        Then Entonces aparecerá una ventana con las opciones "Descartar mensaje" o "Continuar escribiendo".  
+
+ 
+ 
+
+        Examples: 
+
+            | Comentario Corto | Seleccione cantidad de estrellas | Presione Boton Salir de la accion | Aparecera la Opcion "Descartar mensaje"| 
+
+            |   " "            |                                  | Presionado                        |                 True                   | 
+
+ 
+ 
+
+Feature: HU10: Como usuario estresado quiero conectar mi celular con la app para usar mi celular como un casco de realidad virtual. 
+
+ 
+ 
+
+    Scenario: E01: Cambiar a vista de realidad virtual para celulares. 
+
+        Given que la transmisión en vivo del viaje ha iniciado 
+
+        When  presione la opción abajo a la derecha "Transformar a vista de realidad virtual para celulares" y conecte mi celular.  
+
+        Then  el formato de vídeo se cambiará al de realidad virtual para dispositivos móviles duplicando la imagen del vídeo y el usuario podrá colocar su celular en sus cascos de realidad virtual. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Transformar a vista de realidad virtual para celulares"| Celular conectado|Se cambiara el formato |  
+
+            |Presionado                                                                  | True             |True                   | 
+
+ 
+ 
+ 
+
+    Scenario: E02: Cambiar a vista de realidad virtual para celulares sin estar un dispositivo móvil. 
+
+        Given que la transmisión en vivo del viaje ha iniciado  
+
+        When presione la opción abajo a la derecha "Transformar a vista de realidad virtual para celulares" y no conecte mi celular.  
+
+        Then el formato de vídeo no se cambiará al de realidad virtual para dispositivos móviles.      
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Transformar a vista de realidad virtual para celulares" | Celular conectado | Se cambiara el formato| 
+
+            | Presionado                                                                  | False             | False                 |   
+
+ 
+ 
+
+    Scenario: E03: Volver a cambiar a vista normal. 
+
+        Given  que me encuentro viendo la transmisión en vista de realidad virtual para celulares 
+
+        When vuelva a presionar la opción de abajo a la derecha "Cambiar a vista normal". 
+
+        Then el formato del vídeo se restaurará a su estado original. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Transformar a vista de realidad virtual para celulares" | Celular conectado | Boton de cambiar a vista normal| Se cambia a vista normal| 
+
+            | Presionado                                                                  | False             | True                           |  True                   | 
+
+ 
+ 
+
+Feature: HU11: Como usuario estresado quiero conectar mis cascos de realidad virtual con la app para hacerlo más realista. 
+
+ 
+ 
+
+    Scenario: E01: Cambiar a modo de realidad virtual desde el formato Computadora de escritorio. 
+
+        Given que he conectado mis cascos de realidad virtual a mi computadora 
+
+        When inicie la transmisión en vivo del viaje y presione la opción abajo a la derecha "Transformar a vista de realidad virtual".  
+
+        Then el formato de vídeo de cambiará al de realidad virtual y los cascos de realidad virtual recibirán la imagen. 
+
+         
+
+        Examples: 
+
+            | Presionar Boton de "Transformar a vista de realidad virtual para computadora de escritorio" | Cascos conectados | Boton vista de realidad virtual | Se cambia a realidad virtual| 
+
+            | Presionado                                                                                  | True              | True                            | True                        | 
+
+ 
+ 
+
+    Scenario: E02: Cambiar a modo realidad virtual desde el formato Computadora de escritorio sin haber conectado los cascos de realidad virtual. 
+
+        Given que no he conectado mis cascos de realidad virtual a mi computadora 
+
+        When inicie la transmisión en vivo del viaje y presione la opción abajo a la derecha "Transformar a vista de realidad virtual" 
+
+        Then enviará un mensaje de error indicando que no se reconoce el dispositivo solicitado 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Transformar a vista de realidad virtual" | Cascos conectados | Boton vista de realidad virtual | Se cambia a realidad virtual | 
+
+            | Presionado                                                   | False             | False                           | False                        |  
+
+ 
+ 
+
+    Scenario: E03: Cambiar a modo realidad virtual desde el formato Dispositivo móvil 
+
+        Given que estoy en formato Dispositivo móvil 
+
+        When  inicie la transmisión en vivo del viaje y presione la opción abajo a la derecha "Transformar a vista de realidad virtual". 
+
+        Then el botón estará bloqueado indicando que no está disponible para su dispositivo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Transformar a vista de realidad virtual" | Dispositivo móvil | Boton a vista de realidad virtual   | Se cambia a realidad virtual |        
+
+            | Presionado                                                   | True              | False                               | False                        |  
+
+ 
+ 
+
+Feature: HU12: Como piloto de drones quiero ver un registro de viajes para calcular el respectivo cobro a fin de mes. 
+
+ 
+ 
+
+    Scenario: E01: Visualizar el registro de viajes en la aplicación. 
+
+        Given que me encuentro en mi perfil de piloto de drones 
+
+        When  ingrese a la opción "Ver historial de servicios". 
+
+        Then el sistema mostrará cada viaje realizado por el piloto con su respectivo tiempo de viaje y en la parte inferior mostrando la cantidad de que puede cobrar de acuerdo a los viajes sumados. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver historial de servicios"            | Perfil de Piloto de drones  | Historial de servicios | Detalles para el piloto | 
+
+            | Presionando                                                | True                        | True                   | True                    | 
+
+ 
+ 
+
+    Scenario: E02: Visualizar el registro de viajes en la aplicación siendo piloto nuevo. 
+
+        Given que me encuentro en mi perfil de piloto de drones 
+
+        When ingrese a la opción "Ver historial de servicios". 
+
+        Then el sistema mostrará el panel del registro de los viajes vacío por ser piloto nuevo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver historial de servicios"            | Perfil de piloto de drones  | Historial de servicios  | Detalles para el piloto  | 
+
+            | Presionando                                                | True                        | True                    | True                     | 
+
+ 
+ 
+
+Feature: HU13: Como piloto de drones quiero ver un historial del tiempo de servicio en la app para cobrar por ese tiempo. 
+
+ 
+ 
+
+    Scenario: E01: Visualizar el tiempo de servicio en la aplicación. 
+
+        Given que me encuentro en mi perfil de piloto de drones 
+
+        When ingrese a la opción "Ver tiempo en servicio". 
+
+        Then el sistema mostrará cada viaje realizado por el piloto con su respectivo tiempo de viaje y en la parte inferior mostrando la cantidad de que puede cobrar de acuerdo al tiempo y, a su vez, en la parte superior mostrará el tiempo total de servicio dentro de la aplicación. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver tiempo en servicio"                | Perfil de piloto de drones   | Visualizar tiempo de servicio  | Detalles del piloto | 
+
+            | Presionando                                                | True                         | True                           | True                | 
+
+ 
+ 
+
+    Scenario: E02: Visualizar el tiempo de servicio en la aplicación siendo piloto nuevo. 
+
+        Given que me encuentro en mi perfil de piloto de drones 
+
+        When  ingrese a la opción "Ver tiempo en servicio". 
+
+        Then el sistema me mostrará un panel de viajes vacío debido a que soy piloto nuevo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver tiempo en servicio"               | Perfil de piloto de drones   | Visualizar tiempo de servicio  | Detalles del piloto  | 
+
+            | Presionando                                               | True                         | True                           | False                | 
+
+         
+
+Feature: HU14: Como piloto quiero ver notificaciones de la batería del dron para no preocuparme por este. 
+
+ 
+ 
+
+    Scenario: E01: Notificaciones sobre la batería del dron. 
+
+        Given que me encuentro en pleno vuelo de dron 
+
+        When mi dron se quede con 50% de batería. 
+
+        Then me aparecerá a un lado de la pantalla principal una notificación sobre la batería de este. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Notificaciones de la batería del dron         |  En vuelo de dron   |  Cantidad de bateria   | Notificaciones de la batería a un lado de la pantalla principal | 
+
+            | Presionando                                             | True                | True                   | True                                                            | 
+
+ 
+ 
+
+        Given que me encuentro en pleno vuelo de dron 
+
+        When mi dron se quede con 25% de batería. 
+
+        Then me aparecerá a un lado de la pantalla principal una notificación sobre la batería de este. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Notificaciones de la batería del dron         |  En vuelo de dron   |  Cantidad de bateria   | Notificaciones de la batería a un lado de la pantalla principal | 
+
+            | Presionando                                             | True                | True                   | True                                                            | 
+
+ 
+ 
+
+        Given que me encuentro en pleno vuelo de dron 
+
+        When mi dron se quede con 20% de batería. 
+
+        Then me aparecerá a un lado de la pantalla principal una notificación sobre la batería de este. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Notificaciones de la batería del dron         |  En vuelo de dron   |  Cantidad de bateria   | Notificaciones de la batería a un lado de la pantalla principal | 
+
+            | Presionando                                             | True                | True                   | True                                                            | 
+
+ 
+ 
+
+        Given que me encuentro en pleno vuelo de dron 
+
+        When mi dron se quede con menos del 20% de batería. 
+
+        Then me seguirá notificando hasta que quede a 15% con un mensaje de advertencia. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Notificaciones de la batería del dron         |  En vuelo de dron   |  Cantidad de bateria   | Mensaje de advertencia de la bateria | 
+
+            | Presionando                                             | True                | True                   | True                                 | 
+
+         
+
+        Given que me encuentro en pleno vuelo de dron 
+
+        When mi dron se quede con 15% de batería. 
+
+        Then me aparecerá a un lado de la pantalla principal una notificación sobre la batería de este y automáticamente el dron tendrá que bajar. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Notificaciones de la batería del dron         |  En vuelo de dron   |  Cantidad de bateria   | Notificacion del dron y dron de bajada | 
+
+            | Presionando                                             | True                | True                   | True                                   | 
+
+ 
+ 
+
+Feature: HU15: Como cliente estresado quiero ver la localización del dron en un pequeño mapa para guiarme en la ciudad. 
+
+ 
+ 
+
+    Scenario: E01: Abrir la locación del dron en la transmisión. 
+
+        Given que la transmisión en vivo del dron ha iniciado 
+
+        When seleccione el icono del mapa que esta arriba a la izquierda. 
+
+        Then se abrirá un mapa con la localización en tiempo real del dron en la ciudad. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver mapa"                   | Boton de ver mapa   | Mapa en tiempo real | 
+
+            | Presionando                                     | True                | True                |  
+
+     
+
+    Scenario: E02:  Abrir la locación del dron en otro dispositivo. 
+
+        Given que la transmisión en vivo del dron ha iniciado 
+
+        When  ingrese en un dispositivo diferente, seleccione el viaje en transcurso, aparecen dos botones "Ver transmisión aquí" o "Ver mapa" y selecciono el segundo botón. 
+
+        Then se abrirá un mapa con la locación en tiempo real del dron en la ciudad desde un dispositivo diferente. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver mapa"                  | Boton de ver mapa   | Mapa en tiempo real desde un dispositivo diferente | 
+
+            | Presionando                                    | True                | True                                               | 
+
+     
+
+Feature: HU16: Como piloto de drones quiero visualizar la locación del dron en pleno vuelo para evitar accidentes. 
+
+     
+
+    Scenario: E01: Abrir y ver la locación del dron en un mapa con la aplicación del dron vinculada. 
+
+        Given que he vinculado la aplicación del dron con la aplicación AirDronVoyage 
+
+        When comience la transmisión en vivo y seleccione el botón mapa.  
+
+        Then se abrirá el mapa en tiempo real de la ubicación del dron usando el GPS del mismo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver mapa"         | Vincular aplicacion de dron con aplicacion de AirDronVoyage   | Boton de mapa    | Ubicacion de dron en GPS |   
+
+            | Presionando                           | True                                                          | True             | True                     | 
+
+         
+
+    Scenario: E02: Abrir y ver la locación del dron en un mapa sin la aplicación del dron vinculada. 
+
+        Given no he vinculado la aplicación del dron con la aplicación AirDronVoyage 
+
+        When comience la transmisión en vivo y seleccione el botón mapa. 
+
+        Then aparecerá un enlace para vincular las aplicaciones junto con un mensaje de error indicando que se necesita vincular para usar el mapa. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver mapa"         | Vincular aplicacion de dron con aplicacion de AirDronVoyage   | Boton de "Ver mapa" | Ubicacion de dron en GPS | 
+
+            | Presionando                           | False                                                         | True                | False                    | 
+
+     
+
+Feature: HU17: Como piloto quiero ver en vivo la cámara del dron para asegurar que el usuario disfrute de las mejores vistas. 
+
+     
+
+    Scenario: E01: Ver en directo la cámara del dron a través de la app en el celular. 
+
+        Given que estoy realizando un viaje virtual para un usuario estresado 
+
+        When vea la pantalla principal. 
+
+        Then estaré viendo en vivo la cámara de mi dron. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver transmisión aquí"   | Viaje virtual   | Pantalla principal  | visualizar transmisión de el dron en celular | 
+
+            | Presionando                                 | True            | True                | True                                         | 
+
+         
+
+    Scenario: E02: Ver en directo la cámara del dron a través de una computadora. 
+
+        Given que estoy realizando un viaje virtual para un usuario estresado 
+
+        When vea la pantalla principal y seleccione "Ver transmisión aquí" . 
+
+        Then estaré viendo en vivo la cámara de mi dron desde una computadora. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Ver transmisión aquí"   | Viaje virtual   | Pantalla principal  | visualizar transmisión de el dron en computadora | 
+
+            | Presionando                                 | True            | True                | True                                             | 
+
+     
+
+Feature: HU18: Como cliente estresado quiero ver en vivo la ciudad visitada para desestresarme y relajarme. 
+
+     
+
+    Scenario: E01: Ingresar a la transmisión del dron. 
+
+        Given que es la hora programada para el viaje 
+
+        When le doy al botón "Comenzar viaje". 
+
+        Then se abrirá la transmisión en vivo con la cámara del dron en vuelo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton "comenzar viaje"    | Hora del viaje programado   | Boton comenzar viaje    | Transmision del vuelo  | 
+
+            | Presionando                         | True                        | True                    | True                   |  
+
+         
+
+    Scenario: E02: Cambiar de dispositivo para ver la transmisión. 
+
+        Given que la transmisión del viaje ha iniciado 
+
+        When ingrese en otro dispositivo, seleccione el viaje en transcurso y elija la opción "Ver la transmisión aquí". 
+
+        Then se abrirá la transmisión en vivo con la cámara del dron en vuelo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton "comenzar viaje "   | Viaje iniciado      | Ver transmisión aqui   | Transmision del dron  | 
+
+            | Presionando                         | True                | True                   | True                  | 
+
+ 
+ 
+
+Feature: HU19: Como persona que requiere desestresarse quiero ver en alta resolución el paseo virtual para desestresarme con el paisaje. 
+
+     
+
+    Scenario: E01: Cambiar la calidad de la transmisión en vivo. 
+
+        Given que me encuentro en la transmisión en vivo de la cámara del dron 
+
+        When presione el botón de la esquina a la derecha con un engranaje y elijo la calidad 144p. 
+
+        Then la calidad del vídeo cambiará a la 144p. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "calidad de la transmisión"  | Boton de calidad de la transmisión| Cambiar la calidad de la transmisión a 144p |  
+
+            | Presionando                                     | True                              | True                                        | 
+
+         
+
+     
+
+        Given que me encuentro en la transmisión en vivo de la cámara del dron 
+
+        When presione el botón de la esquina a la derecha con un engranaje y elijo la calidad 240p. 
+
+        Then la calidad del vídeo cambiará a la 240p. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "calidad de la transmisión"  | Boton de calidad de la transmisión| Cambiar la calidad de la transmisión a 240p |  
+
+            | Presionando                                     | True                              | True                                        | 
+
+         
+
+        Given  Dado que me encuentro en la transmisión en vivo de la cámara del dron  
+
+        When presione el botón de la esquina a la derecha con un engranaje y elijo la calidad 360p 
+
+        Then la calidad del vídeo cambiará a la 360p. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "calidad de la transmisión"  | Boton de calidad de la transmisión| Cambiar la calidad de la transmisión a 360p |  
+
+            | Presionando                                     | True                              | True                                        | 
+
+         
+
+        Given que me encuentro en la transmisión en vivo de la cámara del dron 
+
+        When presione el botón de la esquina a la derecha con un engranaje y elijo la calidad 480p. 
+
+        Then la calidad del vídeo cambiará a la 480p. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "calidad de la transmisión"  | Boton de calidad de la transmisión| Cambiar la calidad de la transmisión a 480p |  
+
+            | Presionando                                     | True                              | True                                        | 
+
+         
+
+        Given que me encuentro en la transmisión en vivo de la cámara del dron 
+
+        When presione el botón de la esquina a la derecha con un engranaje y elijo la calidad 720p. 
+
+        Then  la calidad del vídeo cambiará a la 720p. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "calidad de la transmisión"  | Boton de calidad de la transmisión| Cambiar la calidad de la transmisión a 720p |  
+
+            | Presionando                                     | True                              | True                                        | 
+
+         
+
+        Given que me encuentro en la transmisión en vivo de la cámara del dron 
+
+        When presione el botón de la esquina a la derecha con un engranaje y elijo la calidad 1080(HD). 
+
+        Then  la calidad del vídeo cambiará a la 1080(HD). 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "calidad de la transmisión"  | Boton de calidad de la transmisión| Cambiar la calidad de la transmisión a 1080(HD) |  
+
+            | Presionando                                     | True                              | True                                        | 
+
+         
+
+        Given que me encuentro en la transmisión en vivo de la cámara del dron 
+
+        When presione el botón de la esquina a la derecha con un engranaje y elijo la calidad 2160(4K). 
+
+        Then  la calidad del vídeo cambiará a la 2160(4K). 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "calidad de la transmisión"  | Boton de calidad de la transmisión| Cambiar la calidad de la transmisión a 2160(4k) |  
+
+            | Presionando                                     | True                              | True                                        | 
+
+ 
+ 
+
+Feature: HU20: Como usuario estresado quiero un buscador para buscar mis lugares favoritos de viaje. 
+
+     
+
+    Scenario: E01: Buscar viajes disponibles dentro del catálogo. 
+
+        Given que me encuentro en el menú de la aplicación 
+
+        When seleccione "Catálogo de lugares turísticos", seleccione el icono de lupa que se encuentra arriba a la derecha de la pantalla, ingrese en formato texto el lugar deseado y presione el botón buscar. 
+
+        Then cargará una página nueva con los lugares turísticos relacionados a ese texto ingresado. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"  | Menu de la aplicacion  | Boton de buscar en forma de lupa  | Lugares turisticos de acuerdo al texto | 
+
+            | Presionando                                          | True                   | True                              | True                                   | 
+
+         
+
+    Scenario: E02: Buscar viajes disponibles dentro del catálogo sin llenar la casilla de búsqueda. 
+
+        Given que me encuentro en el menú de la aplicación 
+
+        When seleccione "Catálogo de lugares turísticos", seleccione el icono de lupa que se encuentra arriba a la derecha de la pantalla, no ingrese ningún texto y presione el botón buscar. 
+
+        Then el sistema no realizará ninguna búsqueda cambiando el color de la lupa a rojo 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"  | Menu de la aplicacion  | Sin texto   | Lugares turisticos de acuerdo al texto | 
+
+            | Presionando                                          | True                   | True        | False                                  | 
+
+ 
+ 
+
+     Scenario: E03: Buscar viajes disponibles dentro del catálogo y rellenar la casilla de búsqueda con datos erróneos. 
+
+        Given  que me encuentro en el menú de la aplicación 
+
+        When  seleccione "Catálogo de lugares turísticos", seleccione el icono de lupa que se encuentra arriba a la derecha de la pantalla, ingrese en formato texto un lugar que no existe y presione el botón buscar. 
+
+        Then cargará una página en blanco diciendo que no existe el lugar indicado y debajo aparecerá una lista de otras recomendaciones de viajes. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"  | Menu de la aplicacion  | Texto no existente  | Lugares turisticos de acuerdo al texto | 
+
+            | Presionando                                          | True                   | True                | False                                  | 
+
+ 
+ 
+
+     Scenario: E04: Buscar viajes no disponibles dentro del catálogo. 
+
+        Given que me encuentro en el menú de la aplicación 
+
+        When  seleccione "Catálogo de lugares turísticos", seleccione el icono de lupa que se encuentra arriba a la derecha de la pantalla, ingrese en formato texto un lugar que no está disponible y presione el botón buscar 
+
+        Then cargará una página con un mensaje indicando que no esta disponible ese destino y debajo aparecerá una lista de otras recomendaciones de viajes. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"  | Menu de la aplicacion  | Texto no dsiponible  | Disponibilidad del viaje buscado       | 
+
+            | Presionando                                          | True                   | True                 | True                                   | 
+
+ 
+ 
+
+Feature: HU21: Como adulto estresado quiero visualizar un catálogo de lugares para escoger mis lugares favoritos. 
+
+     
+
+    Scenario: E01: Ingresar al catálogo de viajes siendo usuario nuevo. 
+
+        Given que me encuentro en el menú de la aplicación 
+
+        When  seleccione "Catálogo de lugares turísticos". 
+
+        Then cargará una página nueva con lugares turísticos disponibles para el cliente. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"    | Menu de la aplicacion | Boton de catalogo de lugares turiticos | lugares turiticos disponibles |  
+
+            | Presionando                                            | True                  | True                                   | True                          | 
+
+         
+
+    Scenario: E02: Buscar recomendaciones según pilotos. 
+
+        Given que me encuentro en el menú de la aplicación 
+
+        When seleccione "Catálogo de lugares turísticos" y elija la opción "Lugares recomendados por pilotos". 
+
+        Then cargará una página nueva con lugares turísticos recomendados por pilotos. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"    | Menu de la aplicacion | Boton de catalogo de lugares turiticos | Boton de lugares recomendados por el piloto | Lugares turisticos recomendados | 
+
+            | Presionando                                            | True                  | True                                   | True                                        | True                            | 
+
+ 
+ 
+
+Feature: HU22: Como joven que busca nuevas experiencias quiero que la app me recomiende lugares de acuerdo con mis gustos para disfrutar más viajes. 
+
+     
+
+    Scenario: E01: Ingresar al catálogo de viajes siendo usuario veterano. 
+
+        Given que me encuentro en el menú de la aplicación 
+
+        When seleccione "Catálogo de lugares turísticos". 
+
+        Then el sistema que detecta a un usuario veterano, según su historial de viajes, cargará una página nueva con lugares turísticos recomendados por la aplicación disponibles para el usuario. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"    | Menu de la aplicacion | Boton de catalogo de lugares turiticos | lugares turiticos disponibles para veteranos |  
+
+            | Presionando                                            | True                  | True                                   | True                                         | 
+
+         
+
+    Scenario: E02:  Buscar recomendaciones según pilotos. 
+
+        Given  que me encuentro en el menú de la aplicación 
+
+        When seleccione "Catálogo de lugares turísticos" y elija la opción "Lugares recomendados por pilotos". 
+
+        Then cargará una página nueva con lugares turísticos recomendados por pilotos que hayan ofrecido un viaje a ese cliente. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Catalogo de lugares turisticos"    | Menu de la aplicacion | Boton de catalogo de lugares turiticos | Boton de lugares recomendados por el piloto | Lugares recomendados  | 
+
+            | Presionando                                            | True                  | True                                   | True                                        | True                  | 
+
+ 
+ 
+
+Feature: HU23: Como cliente nuevo quiero obtener una prueba gratuita para disfrutar mi paseo sin anuncios. 
+
+     
+
+    Scenario: E01: Buscar la prueba gratuita del servicio. 
+
+        Given que ya estoy registrado en la aplicación 
+
+        When abro el botón "Premium". 
+
+        Then la aplicación muestra un menú para ser "Suscriptor Premium" conteniendo las opciones de pago "Prueba gratuita", "Suscripción de 1 mes" y "Suscripción de 3 meses" ordenadas de forma vertical por costo. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton "Premium"  | Registro a la plicacion | Boton de premium | Boton de pago    |  
+
+            | Presionando                | True                    | True             | True             | 
+
+         
+
+    Scenario: E02: Obtener la prueba gratuita. 
+
+        Given que me encuentro en el formulario para obtener la prueba gratuita 
+
+        When le doy a comenzar, selecciono método de pago, lleno los datos de la tarjeta, confirmo la contraseña de la cuenta y selecciono el botón enviar. 
+
+        Then puedo disfrutar de los beneficios de la app con la prueba gratuita y puede cancelar el servicio cuando la fecha límite para la prueba se acerque. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton "Premium"  | Registro a la plicacion | Boton de premium | Boton de pago       | Boton prueba gratuita  | 
+
+            | Presionando                | True                    | True             | True                | True                   | 
+
+ 
+ 
+
+    Scenario: E03:  Dejar casillas en blanco en el formulario de prueba gratuita. 
+
+        Given que me encuentro en el formulario para obtener la prueba gratuita 
+
+        When le doy a comenzar, selecciono método de pago, dejo casillas en blanco, confirmo la contraseña de la cuenta y selecciono el botón enviar. 
+
+        Then me aparecerá un mensaje indicando que deben rellenarse todos los campos. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Prueba gratuita" |  Formulario | Metodo de pago | boton enviar    | Rellene campos vacios | 
+
+            | Presionando                          |  False      | False          | True            | False                 | 
+
+ 
+ 
+
+    Scenario: E04: No seleccionar método de pago en el formulario de prueba gratuita. 
+
+        Given que me encuentro en el formulario para obtener la prueba gratuita 
+
+        When le doy a comenzar, no selecciono método de pago y selecciono el botón siguiente. 
+
+        Then  me aparecerá un mensaje indicando que debe elegirse un método de pago. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Prueba gratuita" |  Formulario | Metodo de pago | boton enviar    | Rellene campos vacios | 
+
+            | Presionando                          |  True       | False          | True            | True                  | 
+
+ 
+ 
+
+    Scenario: E05: Ingresar una contraseña incorrecta en el formulario de prueba gratuita. 
+
+        Given que me encuentro en el formulario para obtener la prueba gratuita 
+
+        When  le doy a comenzar, selecciono método de pago, lleno los datos de la tarjeta, ingreso una contraseña incorrecta y presiono el botón siguiente.  
+
+        Then me aparecerá un mensaje indicando que la contraseña no coincide. 
+
+ 
+ 
+
+        Examples: 
+
+            | Presionar Boton de "Prueba gratuita" |  Formulario | Metodo de pago | Contraseña | boton enviar    | Rellene campos vacios | 
+
+            | Presionando                          |  True       | True           | False      | True            | True                  | 
+
+ 
